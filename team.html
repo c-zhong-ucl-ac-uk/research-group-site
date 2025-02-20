@@ -137,8 +137,10 @@
 <header data-bs-theme="light">
     <nav class="navbar navbar-expand-md navbar-light fixed-top bg-light">
         <div class="container-fluid">
-            <a class="navbar-brand" href="index.html">realTrips</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <a class="navbar-brand" href="index.html">
+                <img src="images/LOGO_ERC.png" alt="realTRIPS Logo" width="35" height="35">
+                realTRIPS
+            </a>            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -146,24 +148,26 @@
                     <!--                    <li class="nav-item">-->
                     <!--                        <a class="nav-link active" aria-current="page" href="#">Home</a>-->
                     <!--                    </li>-->
+
+
+
+
                     <li class="nav-item">
-                        <a class="nav-link" href="about.html">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link disabled" href="#" aria-disabled="true">Team</a>
+                        <a class="nav-link" href="projects.html">Projects</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="publications.html">Publications</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="projects.html">Projects</a>
+                        <a class="nav-link" href="presentations.html">Presentations</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="presentations.html" >Presentations</a>
+                        <a class="nav-link disabled" href="#" aria-disabled="true">Team</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="news.html">News</a>
+                        <a class="nav-link" href="opportunities.html">Opportunities</a>
                     </li>
+
                 </ul>
                 <form class="d-flex" role="search">
                     <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
@@ -218,7 +222,7 @@
             <div class="col-md-10">
                 <p id="filter-stats">Loading data...</p>
                 <hr>
-                <div class="row row-cols-1 row-cols-md-3 g-4" id="card-container">
+                <div class="row row-cols-1 row-cols-md-4 g-4" id="card-container">
 <!--                    <div class="col">-->
 <!--                        <div class="card h-100">-->
 <!--                            <img src="https://profiles.ucl.ac.uk/95256-adham-enaya/photo" class="card-img-top" alt="...">-->
@@ -456,8 +460,8 @@
                         <div class="card h-100">
                             <img src="${GenerateImageDirect(item.Image)}" class="card-img-top" alt="Profile Image">
                             <div class="card-body">
-                                <h5 class="card-title"><a href="team-details.html?name=${formatText(item.Name)}">${item.Name || "No Name"}</a></h5>
-                                <p class="card-text">${truncateText(item.Bio, 150) || "No description available."}</p>
+                                <h6 class="card-title"><a href="team-details.html?name=${formatText(item.Name)}">${item.Name || "No Name"}</a></h6>
+                                <p class="card-text">${truncateText(item.Bio, 100) || "No description available."}</p>
                                 <a href="${item.Linkedin}">Linkedin</a>
                                 - <a href="${item.Github}">Github</a>
                             </div>
