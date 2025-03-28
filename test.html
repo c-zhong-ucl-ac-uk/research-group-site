@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSV Data Table</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container">
+    <table class="table" id="data-table">
+        <thead>
+        <tr>
+            <th scope="col">City Case Study</th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSu8t0C4JlmI0sDeOqwtucV_3Ifwt4MmxWoTj89EEKDXXKhu22bL_6axbLWJATcLeDvIJeDoJU4gcmp/pub?output=csv'; // Replace with your CSV URL
+
+    function parseCSV(data) {
+        const lines = data.split("\n").map(line => line.trim()); // Remove unnecessary whitespace
+        const headers = lines[0].split(",");
+        const rows = lines.slice(1).map(line => line.split(","));
+
+        // Return array of objects
+        return rows.map(row => {
+            const obj = {};
+            headers.forEach((header, index) => {
+                obj[header.trim()] = row[index]?.trim();  // Handle empty or undefined values safely
+            });
+            console.log(obj);
+            return obj;
+        });
+    }
+
+    $(document).ready(function() {
+        $.ajax({
+            url: csvUrl,
+            dataType: "text",
+            success: function (data) {
+                const parsedData = parseCSV(data);
+                populateTable(parsedData);
+            },
+            error: function () {
+                $('#data-table tbody').html('<tr><td colspan="2">Error loading CSV data.</td></tr>');
+            }
+        });
+
+        function populateTable(parsedData) {
+            const table = $('#data-table tbody');
+            table.empty();  // Clear existing data
+
+            parsedData.forEach((row, index) => {
+                console.log("Row Data:", row);  // Debugging each row
+                console.log("Available Keys:", Object.keys(row));  // See actual column names
+
+                // Check the exact column names in parsed data
+                if (row['Title']) {
+                    let tableRow = `<tr><th scope="row">${index + 1}</th><td>`;
+
+                    if (row['Link']) {
+                        tableRow += `<a href="${row['Link']}" target="_blank">${row['Title']}</a><br>${row['Authors']} - ${row['Year']}`;
+                    } else {
+                        tableRow += `${row['Title']}<br>${row['Authors']} - ${row['Year']}`;
+                    }
+
+                    tableRow += '</td></tr>';
+                    table.append(tableRow);
+                } else {
+                    console.warn("Skipping row due to missing fields:", row);
+                }
+            });
+        }
+
+
+    });
+
+</script>
+
+</body>
+</html>

@@ -109,6 +109,59 @@
         .bd-mode-toggle .dropdown-menu .active .bi {
           display: block !important;
         }
+         .profile-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 0; /* No rounded corners */
+        }
+
+        .profile-card img {
+            width: 100%;
+            height: 350px; /* Square shape */
+            object-fit: cover;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Align text to the left */
+            text-align: left; /* Ensure text is aligned to the left */
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            padding: 20px;
+        }
+
+        .profile-card:hover .overlay {
+            opacity: 1;
+        }
+
+        .profile-name {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 5px 10px;
+        }
+
+        .profile-name a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .overlay a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 10px;
+        }
     </style>
 
 
@@ -135,7 +188,7 @@
 </svg>
 
 <header data-bs-theme="light">
-    <nav class="navbar navbar-expand-md navbar-light fixed-top bg-light">
+    <nav class="navbar navbar-expand-md navbar-light fixed-top bg-white border-bottom">
         <div class="container-fluid">
             <a class="navbar-brand" href="index.html">
                 <img src="images/LOGO_ERC.png" alt="realTRIPS Logo" width="35" height="35">
@@ -198,28 +251,28 @@
 <!--        <hr class="featurette-divider">-->
 
         <div class="row featurette">
-            <div class="col-md-2">
-                <p>Filter by:</p>
-                <hr>
-                <div class="dropdown mb-2" style="width: 100%;">
-                    <a class="btn btn-outline-primary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" id="research-area-dropdown">
-                        Research area
-                    </a>
-                    <ul class="dropdown-menu" id="topics-dropdown">
-                        <!-- Topics will be populated here -->
-                    </ul>
-                </div>
+<!--            <div class="col-md-2">-->
+<!--                <p>Filter by:</p>-->
+<!--                <hr>-->
+<!--                <div class="dropdown mb-2" style="width: 100%;">-->
+<!--                    <a class="btn btn-outline-primary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" id="research-area-dropdown">-->
+<!--                        Research area-->
+<!--                    </a>-->
+<!--                    <ul class="dropdown-menu" id="topics-dropdown">-->
+<!--                        &lt;!&ndash; Topics will be populated here &ndash;&gt;-->
+<!--                    </ul>-->
+<!--                </div>-->
 
-                <div class="dropdown mb-2" style="width: 100%;">
-                    <a class="btn btn-outline-primary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" id="job-dropdown">
-                        Job
-                    </a>
-                    <ul class="dropdown-menu" id="jobs-dropdown">
-                        <!-- Jobs will be populated here -->
-                    </ul>
-                </div>
-            </div>
-            <div class="col-md-10">
+<!--                <div class="dropdown mb-2" style="width: 100%;">-->
+<!--                    <a class="btn btn-outline-primary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" id="job-dropdown">-->
+<!--                        Job-->
+<!--                    </a>-->
+<!--                    <ul class="dropdown-menu" id="jobs-dropdown">-->
+<!--                        &lt;!&ndash; Jobs will be populated here &ndash;&gt;-->
+<!--                    </ul>-->
+<!--                </div>-->
+<!--            </div>-->
+            <div class="col-md-12">
                 <p id="filter-stats">Loading data...</p>
                 <hr>
                 <div class="row row-cols-1 row-cols-md-4 g-4" id="card-container">
@@ -451,23 +504,31 @@
             }
 
             // Update the filter stats text
-            filterStats.text(filterText);
+<!--            filterStats.text(filterText);-->
+            filterStats.text("");
 
             // Loop through the filtered data and create a card for each item
            filteredData.forEach(item => {
                 const cardHtml = `
                     <div class="col">
-                        <div class="card h-100">
+                        <div class="card profile-card">
                             <img src="${GenerateImageDirect(item.Image)}" class="card-img-top" alt="Profile Image">
-                            <div class="card-body">
-                                <h6 class="card-title"><a href="team-details.html?name=${formatText(item.Name)}">${item.Name || "No Name"}</a></h6>
-                                <p class="card-text">${truncateText(item.Bio, 100) || "No description available."}</p>
-                                <a href="${item.Linkedin}">Linkedin</a>
-                                - <a href="${item.Github}">Github</a>
+
+                            <div class="overlay">
+                                <div class="bio-text">${truncateText(item.Bio, 100) || "No description available."}</div>
+                                <div class="links">
+                                    <a href="${item.Linkedin}" target="_blank">LinkedIn</a> |
+                                    <a href="${item.Github}" target="_blank">GitHub</a>
+                                </div>
+                            </div>
+
+                            <div class="profile-name">
+                                <a href="team-details.html?name=${formatText(item.Name)}">${item.Name || "No Name"}</a>
                             </div>
                         </div>
                     </div>
                 `;
+
                 container.append(cardHtml);
             });
         }
