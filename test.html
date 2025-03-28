@@ -1,87 +1,160 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>CSV Data Table</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenStreetMap with GeoJSON Polygon and Connected Regions</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map { height: 500px; width: 100%; }
+        .controls {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background-color: white;
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 999;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+    </style>
 </head>
 <body>
-
-<div class="container">
-    <table class="table" id="data-table">
-        <thead>
-        <tr>
-            <th scope="col">City Case Study</th>
-            <th scope="col"></th>
-        </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
+<div class="controls">
+    <label><input type="radio" name="mode" id="modeSIPbi" value="SIP_bi"> SIP_bi</label><br>
+    <label><input type="radio" name="mode" id="modeSIPpt" value="SIP_pt"> SIP_pt</label><br>
+    <label><input type="radio" name="mode" id="modeSIPdr" value="SIP_dr"> SIP_dr</label><br>
 </div>
+<div id="map"></div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
 <script>
-    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSu8t0C4JlmI0sDeOqwtucV_3Ifwt4MmxWoTj89EEKDXXKhu22bL_6axbLWJATcLeDvIJeDoJU4gcmp/pub?output=csv'; // Replace with your CSV URL
+    let regionPairs = [];
+    fetch('data/SIP_camden_allmodes.json')
+        .then(response => response.json())
+        .then(data => {
+            regionPairs = data;
+        })
+        .catch(error => console.error('Error loading region pairs:', error));
 
-    function parseCSV(data) {
-        const lines = data.split("\n").map(line => line.trim()); // Remove unnecessary whitespace
-        const headers = lines[0].split(",");
-        const rows = lines.slice(1).map(line => line.split(","));
+    var map = L.map('map').setView([51.54332, -0.15658], 14);
 
-        // Return array of objects
-        return rows.map(row => {
-            const obj = {};
-            headers.forEach((header, index) => {
-                obj[header.trim()] = row[index]?.trim();  // Handle empty or undefined values safely
-            });
-            console.log(obj);
-            return obj;
-        });
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CartoDB</a>'
+    }).addTo(map);
+
+    function getColor(value) {
+        if (value < 20) return 'lightblue';
+        if (value < 40) return 'lightgreen';
+        if (value < 60) return 'yellow';
+        if (value < 80) return 'orange';
+        return 'red';
     }
 
-    $(document).ready(function() {
-        $.ajax({
-            url: csvUrl,
-            dataType: "text",
-            success: function (data) {
-                const parsedData = parseCSV(data);
-                populateTable(parsedData);
-            },
-            error: function () {
-                $('#data-table tbody').html('<tr><td colspan="2">Error loading CSV data.</td></tr>');
-            }
-        });
-
-        function populateTable(parsedData) {
-            const table = $('#data-table tbody');
-            table.empty();  // Clear existing data
-
-            parsedData.forEach((row, index) => {
-                console.log("Row Data:", row);  // Debugging each row
-                console.log("Available Keys:", Object.keys(row));  // See actual column names
-
-                // Check the exact column names in parsed data
-                if (row['Title']) {
-                    let tableRow = `<tr><th scope="row">${index + 1}</th><td>`;
-
-                    if (row['Link']) {
-                        tableRow += `<a href="${row['Link']}" target="_blank">${row['Title']}</a><br>${row['Authors']} - ${row['Year']}`;
-                    } else {
-                        tableRow += `${row['Title']}<br>${row['Authors']} - ${row['Year']}`;
+    let geojsonLayer;
+    fetch('data/camden2.geojson')
+        .then(response => response.json())
+        .then(data => {
+            if (data.features && data.features.length > 0) {
+                geojsonLayer = L.geoJSON(data, {
+                    style: function (feature) {
+                        return {
+                            fillColor: 'lightblue',
+                            color: 'blue',
+                            weight: 2,
+                            opacity: 0.8,
+                            fillOpacity: 0.3
+                        };
                     }
+                }).addTo(map);
 
-                    tableRow += '</td></tr>';
-                    table.append(tableRow);
-                } else {
-                    console.warn("Skipping row due to missing fields:", row);
+                function highlightTargetRegion(sourceRegionCode) {
+                    const selectedMode = getSelectedMode();
+                    const connectedTargets = new Set();
+                    regionPairs.forEach(pair => {
+                        if (pair.source === sourceRegionCode) {
+                            connectedTargets.add(pair.target);
+                        }
+                    });
+
+                    geojsonLayer.eachLayer(function (layer) {
+                        const regionId = layer.feature.properties.lsoa21cd;
+                        if (connectedTargets.has(regionId)) {
+                            const regionPair = regionPairs.find(pair => pair.source === sourceRegionCode && pair.target === regionId);
+                            const value = regionPair ? regionPair[selectedMode.toLowerCase()] : 0;
+                            const color = getColor(value);
+
+                            layer.setStyle({
+                                fillColor: color,
+                                weight: 3,
+                                fillOpacity: 0.7
+                            });
+                        } else {
+                            layer.setStyle({
+                                fillColor: 'lightblue',
+                                weight: 2,
+                                fillOpacity: 0.3
+                            });
+                        }
+                    });
                 }
-            });
-        }
 
+                function resetHighlight() {
+                    geojsonLayer.eachLayer(function (layer) {
+                        layer.setStyle({
+                            fillColor: 'lightblue',
+                            weight: 2,
+                            fillOpacity: 0.3
+                        });
+                    });
+                }
 
-    });
+                geojsonLayer.on('mouseover', function (event) {
+                    const regionCode = event.layer.feature.properties.lsoa21cd;
+                    highlightTargetRegion(regionCode);
+                });
+
+                geojsonLayer.on('mouseout', resetHighlight);
+
+                const radioButtons = document.querySelectorAll('input[name="mode"]');
+                radioButtons.forEach(button => {
+                    button.addEventListener('change', updateMapColors);
+                });
+
+                function updateMapColors() {
+                    const selectedMode = getSelectedMode();
+                    if (!selectedMode) return;
+
+                    geojsonLayer.eachLayer(function (layer) {
+                        const regionCode = layer.feature.properties.lsoa21cd;
+                        let value = 0;
+
+                        const regionPair = regionPairs.find(pair => pair.source === regionCode || pair.target === regionCode);
+                        if (regionPair) {
+                            value = regionPair[selectedMode.toLowerCase()];
+                        }
+
+                        const color = getColor(value);
+
+                        layer.setStyle({
+                            fillColor: color,
+                            weight: 2,
+                            fillOpacity: 0.6
+                        });
+                    });
+                }
+
+                function getSelectedMode() {
+                    const selectedRadio = document.querySelector('input[name="mode"]:checked');
+                    return selectedRadio ? selectedRadio.value : '';
+                }
+            } else {
+                console.error('GeoJSON data is empty or invalid.');
+            }
+        })
+        .catch(error => console.error('Error loading GeoJSON: ', error));
 
 </script>
-
 </body>
 </html>

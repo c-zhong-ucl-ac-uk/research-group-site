@@ -144,8 +144,10 @@
 
         .profile-name {
             position: absolute;
-            bottom: 10px;
-            left: 10px;
+            bottom: 0px;
+            left: 0px;
+            right: 0px;
+            width:100%;
             background: rgba(0, 0, 0, 0.7);
             padding: 5px 10px;
         }
@@ -154,6 +156,11 @@
             color: white;
             text-decoration: none;
             font-weight: bold;
+        }
+        .profile-name p {
+            color: white;
+            text-decoration: none;
+            margin-bottom:0;
         }
 
         .overlay a {
@@ -517,13 +524,15 @@
                             <div class="overlay">
                                 <div class="bio-text">${truncateText(item.Bio, 100) || "No description available."}</div>
                                 <div class="links">
-                                    <a href="${item.Linkedin}" target="_blank">LinkedIn</a> |
+                                    <a href="${item.Linkedin}" target="_blank">Web</a> |
                                     <a href="${item.Github}" target="_blank">GitHub</a>
                                 </div>
                             </div>
 
                             <div class="profile-name">
-                                <a href="team-details.html?name=${formatText(item.Name)}">${item.Name || "No Name"}</a>
+                                <a href="">${item.Name || "No Name"}</a>
+                                <br>
+                                <p>${item.Job}</p>
                             </div>
                         </div>
                     </div>

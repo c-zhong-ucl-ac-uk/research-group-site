@@ -193,8 +193,8 @@
 
     function parseTSV(data) {
         const lines = data.split("\n").map(line => line.trim());
-        const headers = lines[0].split("\t"); // Split by tab instead of comma
-        const rows = lines.slice(1).map(line => line.split("\t")); // Split by tab instead of comma
+        const headers = lines[0].split("\t");
+        const rows = lines.slice(1).map(line => line.split("\t"));
 
         return rows.map(row => {
             const obj = {};
@@ -223,7 +223,7 @@
             container.empty();
 
             const cityGroups = parsedData.reduce((groups, item) => {
-                const city = item['City Case Study'] || 'Unknown City'; // Use 'City Case Study' instead of City, and handle missing
+                const city = item['City'] || 'Unknown City';
                 if (!groups[city]) {
                     groups[city] = [];
                 }
@@ -233,17 +233,23 @@
 
             for (const city in cityGroups) {
                 const cityData = cityGroups[city];
-                const table = $('<table class="table"><thead><tr><th scope="col">' + city + '</th><th scope="col"></th></tr></thead><tbody></tbody></table>');
+                const table = $('<table class="table"><thead><tr><th scope="col" colspan="2">' + city + '</th></tr></thead><tbody></tbody></table>');
                 const tbody = table.find('tbody');
 
                 cityData.forEach((row, index) => {
                     if (row['Title']) {
-                        let tableRow = `<tr><th scope="row" style="width:30px">${index + 1}</th><td>`;
+                        let year = row['Year'];
+                        if (year) {
+                            // Extract year from date string if it's a date
+                            year = year.toString().match(/\d{4}/)?.[0] || year;
+                        }
+
+                        let tableRow = `<tr><th scope="row" style="width:50px">${index + 1}</th><td>`;
 
                         if (row['Link']) {
-                            tableRow += `<a href="${row['Link']}" target="_blank">${row['Title']}</a><br>${row['Authors']} - ${row['Year']}`;
+                            tableRow += `<a href="${row['Link']}" target="_blank">${row['Title']}</a><br>${row['Authors']} - ${year}`;
                         } else {
-                            tableRow += `${row['Title']}<br>${row['Authors']} - ${row['Year']}`;
+                            tableRow += `${row['Title']}<br>${row['Authors']} - ${year}`;
                         }
 
                         tableRow += '</td></tr>';
