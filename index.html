@@ -209,9 +209,32 @@
 
     <div class="container marketing">
         <div class="row">
-            <div class="col-md-12" id="map">
+            <div class="col-md-12" style="position: relative;">
+                <div id="map" style="width: 100%; height: 400px;"></div>
+
+                <div class="controls" style="
+            position: absolute;
+            left: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            z-index: 1000;
+            flex-direction: column;
+            white-space: nowrap;
+        ">
+                    <label style="">
+                        <input type="radio" name="mode" value="SIP_bi" checked>
+                        <span style="margin-left: 5px;">Bicycle</span>
+                    </label>
+                    <label style="">
+                        <input type="radio" name="mode" value="SIP_car">
+                        <span style="margin-left: 5px;">Car</span>
+                    </label>
+                    <label>
+                        <input type="radio" name="mode" value="SIP_pt">
+                        <span style="margin-left: 5px;">Public Transport</span>
+                    </label>
+                </div>
             </div>
-        </div><!-- /.row -->
+        </div>        <!-- /.row -->
         <hr class="featurette-divider">
         <div class="container">
             <div class="row">
@@ -315,15 +338,20 @@
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
     let regionPairs = [];
-    fetch('data/SIP_camden_adjbbox.json')
+    fetch('data/SIP_camden_adjbbox_normed.json')
         .then(response => response.json())
         .then(data => {
             regionPairs = data;
         })
         .catch(error => console.error('Error loading region pairs:', error));
 
-    var map = L.map('map').setView([51.54332, -0.15658], 14);
-
+    var map = L.map('map', {
+        zoomControl: false,         // Remove zoom control buttons
+        scrollWheelZoom: false,     // Disable zooming with the mouse wheel
+        doubleClickZoom: false,     // Disable zooming on double-click
+        touchZoom: false,           // Disable touch-based zooming
+        boxZoom: false              // Disable zooming with box selection
+    }).setView([51.54332, -0.15658], 14);
     L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CartoDB</a>'
     }).addTo(map);
@@ -343,15 +371,15 @@
 
 
     function getColor(value) {
-        if (value < 19) return 'lightblue';
-        if (value < 20) return 'lightgreen';
-        if (value < 21) return 'yellow';
-        if (value < 22) return 'orange';
+        if (value < 0.1) return 'lightblue';
+        if (value < 0.3) return 'lightgreen';
+        if (value < 0.6) return 'yellow';
+        if (value < 0.9) return 'orange';
         return 'red';
     }
 
     let geojsonLayer;
-    fetch('data/camden2.geojson')
+    fetch('data/aggregated.geojson')
         .then(response => response.json())
         .then(data => {
             if (data.features && data.features.length > 0) {
@@ -380,7 +408,9 @@
                         const regionId = layer.feature.properties.lsoa21cd;
                         if (connectedTargets.has(regionId)) {
                             const regionPair = regionPairs.find(pair => pair.source === sourceRegionCode && pair.target === regionId);
-                            const value = regionPair ? regionPair[selectedMode.toLowerCase()] : 0;
+                            const value = regionPair ? regionPair[selectedMode] : 0;
+
+                            console.log(regionPair);
                             const color = getColor(value);
 
                             layer.setStyle({

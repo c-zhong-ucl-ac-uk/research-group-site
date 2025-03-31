@@ -189,7 +189,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    const tsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTdqFHlIjhNaDgJB8k59rfzvl79pvh2uzD1crLWo8mqpsMF2D61m6_dZKlQ9avF_kQz_uhADs_jGrF9/pub?output=tsv';
+    const tsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQRgLVjhKj9bGisYFNxW_AqvyfYQh4_3JsitOB8XRiwdX1tdBtwzq2MKKyY9a9sm8eltKqeqSLcRRYr/pub?output=tsv';
 
     function parseTSV(data) {
         const lines = data.split("\n").map(line => line.trim());
@@ -223,21 +223,27 @@
             container.empty();
 
             const cityGroups = parsedData.reduce((groups, item) => {
-                const city = item['City'] || 'Unknown City';
+                const city = item['City'] || 'Other Cities';
                 if (!groups[city]) {
                     groups[city] = [];
                 }
-                groups[city].push(item);
+                if (item.Active && (item.Active.toLowerCase() === "yes")) {
+                    groups[city].push(item);
+                }
                 return groups;
             }, {});
 
             for (const city in cityGroups) {
                 const cityData = cityGroups[city];
-                const table = $('<table class="table"><thead><tr><th scope="col" colspan="2">' + city + '</th></tr></thead><tbody></tbody></table>');
-                const tbody = table.find('tbody');
 
-                cityData.forEach((row, index) => {
-                    if (row['Title']) {
+                // Filter out inactive items *before* creating the table
+                const activeCityData = cityData.filter(row => row.Active && row.Active.toLowerCase() === "yes" && row['Title']);
+
+                if (activeCityData.length > 0) { // Only create table if there are active items
+                    const table = $('<table class="table"><thead><tr><th scope="col" colspan="2">' + city + '</th></tr></thead><tbody></tbody></table>');
+                    const tbody = table.find('tbody');
+
+                    activeCityData.forEach((row, index) => {
                         let year = row['Year'];
                         if (year) {
                             // Extract year from date string if it's a date
@@ -254,10 +260,10 @@
 
                         tableRow += '</td></tr>';
                         tbody.append(tableRow);
-                    }
-                });
+                    });
 
-                container.append(table);
+                    container.append(table);
+                }
             }
         }
     });
