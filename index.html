@@ -315,7 +315,7 @@
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
     let regionPairs = [];
-    fetch('data/SIP_camden_allmodes.json')
+    fetch('data/SIP_camden_adjbbox.json')
         .then(response => response.json())
         .then(data => {
             regionPairs = data;
@@ -328,11 +328,25 @@
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CartoDB</a>'
     }).addTo(map);
 
+    // Assuming you have initialized a Leaflet map instance named `map`
+    const bounds = map.getBounds();
+
+    // Bounding box coordinates
+    const bbox = {
+        north: bounds.getNorth(),
+        south: bounds.getSouth(),
+        east: bounds.getEast(),
+        west: bounds.getWest()
+    };
+
+    console.log("Bounding Box:", bbox);
+
+
     function getColor(value) {
-        if (value < 20) return 'lightblue';
-        if (value < 40) return 'lightgreen';
-        if (value < 60) return 'yellow';
-        if (value < 80) return 'orange';
+        if (value < 19) return 'lightblue';
+        if (value < 20) return 'lightgreen';
+        if (value < 21) return 'yellow';
+        if (value < 22) return 'orange';
         return 'red';
     }
 
@@ -430,8 +444,9 @@
                 }
 
                 function getSelectedMode() {
+                    return 'SIP_bi';
                     const selectedRadio = document.querySelector('input[name="mode"]:checked');
-                    return selectedRadio ? selectedRadio.value : '';
+                    return selectedRadio ? selectedRadio.value : 'SIP_bi';
                 }
             } else {
                 console.error('GeoJSON data is empty or invalid.');
