@@ -253,9 +253,9 @@
                         let tableRow = `<tr><th scope="row" style="width:50px">${index + 1}</th><td>`;
 
                         if (row['Link']) {
-                            tableRow += `<a href="${row['Link']}" target="_blank">${row['Title']}</a><br>${row['Authors']} - ${year}`;
+                            tableRow += `<a href="${row['Link']}" target="_blank">${row['Title']}</a><br>${row['Authors']} - ${year} - ${row['Venue']}`;
                         } else {
-                            tableRow += `${row['Title']}<br>${row['Authors']} - ${year}`;
+                            tableRow += `${row['Title']}<br>${row['Authors']} - ${year} - ${row['Venue']}`;
                         }
 
                         tableRow += '</td></tr>';
