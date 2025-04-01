@@ -186,73 +186,7 @@
     ================================================== -->
     <!-- Wrap the rest of the page in another container to center all the content. -->
 
-    <div class="container marketing">
-
-        <!-- START THE FEATURETTES -->
-
-<!--        <hr class="featurette-divider">-->
-
-        <div class="row featurette">
-<!--            <div class="col-md-2">-->
-<!--                <h6>Filter by:</h6>-->
-<!--                <hr>-->
-<!--                <div class="dropdown mb-2" style="width: 100%;">-->
-<!--                    <a class="btn btn-outline-primary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">-->
-<!--                        Research area-->
-<!--                    </a>-->
-
-<!--                    <ul class="dropdown-menu">-->
-<!--                        <li><a class="dropdown-item" href="#">Action</a></li>-->
-<!--                        <li><a class="dropdown-item" href="#">Another action</a></li>-->
-<!--                        <li><a class="dropdown-item" href="#">Something else here</a></li>-->
-<!--                    </ul>-->
-<!--                </div>-->
-<!--            </div>-->
-            <div class="col-md-12">
-                <h6>1 - 6 of 12 presentations</h6>
-                <hr>
-                <div class="container">
-                    <div class="row mb-4 align-items-top">
-                        <div class="col-md-4">
-                            <img src="https://mappingfutures.org/wp-content/uploads/2016/06/3.-Community-Location-Type-Density.jpg" class="img-fluid rounded" alt="realTrips">
-                        </div>
-                        <div class="col-md-8">
-                            <h5>realTrips</h5>
-                            <p><strong>Project Lead:</strong> Chen Zhong</p>
-                            <p>This is a longer below lead-in to additional content. This content is a little bit longer.</p>
-                            <a href="#">Learn more</a>
-                        </div>
-                    </div>
-                    <hr>
-
-                    <div class="row mb-4 ">
-                        <div class="col-md-4">
-                            <img src="https://images.squarespace-cdn.com/content/v1/5bdcabce55b02cda4d9797cf/1616125798949-PENFOI53Z5YJFVJ8BMXQ/image2.png?format=2500w" class="img-fluid rounded" alt="Card title">
-                        </div>
-                        <div class="col-md-8">
-                            <h5>Card title</h5>
-                            <p>This is a longer card with supporting text below as a natural lead-in to additional content.</p>
-                        </div>
-                    </div>
-                    <hr>
-
-                    <div class="row mb-4 ">
-                        <div class="col-md-4">
-                            <img src="https://developer.ibm.com/developer/default/articles/cc-machine-learning-deep-learning-architectures/images/figure04.png" class="img-fluid rounded" alt="Card title">
-                        </div>
-                        <div class="col-md-8">
-                            <h5>Card title</h5>
-                            <p>This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <hr class="featurette-divider">
-
-        <!-- /END THE FEATURETTES -->
+    <div class="container marketing" id="presentations-container">
 
     </div><!-- /.container -->
 
@@ -264,6 +198,86 @@
     </footer>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    const tsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTORqQ0IKcLNuulWcYKABBCvMubmEgNVGXmuHYP-jFz_BGxGw2jkhcaFYlC8AJ7dzk8DJPcMKYwlPhG/pub?output=tsv';
+    function generateItems(dataList) {
+        const container = document.createElement('div');
+        container.className = 'container';
 
+        if (!Array.isArray(dataList)) {
+            console.error("Input must be an array.");
+            return container;
+        }
+
+        dataList.forEach((data, index) => {
+            if (data.Active && data.Active.toLowerCase() === 'yes') { // Check for Active = yes
+                const row = document.createElement('div');
+                row.className = 'row featurette';
+
+                const col1 = document.createElement('div');
+                col1.className = 'col-md-6';
+
+                const col2 = document.createElement('div');
+                col2.className = 'col-md-6';
+
+                let titleHtml = data.Title;
+                if (data.Link) {
+                    titleHtml = `<a href="${data.Link}" target="_blank">${data.Title}</a>`;
+                }
+
+                let conferenceHtml = data['Conference name'];
+                if (data['Conference link']) {
+                    conferenceHtml = `<a href="${data['Conference link']}" target="_blank">${data['Conference name']}</a>`;
+                }
+
+                col1.innerHTML = `
+                    <h3 class="fw-normal lh-1">${titleHtml}</h3>
+                    <p>${conferenceHtml}</p>
+                    <p>Authors: ${data.Authors}</p>
+                    <p>${data.Keywards}</p>
+                `;
+                col2.innerHTML = `<img src="${data.Image}" class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" width="100%" height="300" alt="Featured Image">`;
+
+                if (index % 2 !== 0) {
+                    col2.classList.add('order-md-2');
+                    col1.classList.add('order-md-1');
+                }
+
+                row.appendChild(col1);
+                row.appendChild(col2);
+                container.appendChild(row);
+                container.appendChild(document.createElement('hr')).className = "featurette-divider";
+            }
+        });
+
+        return container;
+    }
+
+    $(document).ready(function() {
+        $.get(tsvUrl, function(tsvData) {
+            const lines = tsvData.split('\n');
+            const headers = lines[0].split('\t').map(header => header.trim());
+
+            const jsonData = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                if (lines[i].trim() === '') continue;
+                const values = lines[i].split('\t');
+                const rowData = {};
+                for (let j = 0; j < headers.length; j++) {
+                    rowData[headers[j]] = values[j];
+                }
+                jsonData.push(rowData);
+            }
+
+            const generatedItems = generateItems(jsonData);
+            $("#presentations-container").append(generatedItems);
+        }).fail(function(){
+            alert("Error loading TSV data");
+        });
+    });
+</script>
 </body>
 </html>
