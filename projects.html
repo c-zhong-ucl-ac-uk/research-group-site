@@ -143,13 +143,6 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav me-auto mb-2 mb-md-0">
-                    <!--                    <li class="nav-item">-->
-                    <!--                        <a class="nav-link active" aria-current="page" href="#">Home</a>-->
-                    <!--                    </li>-->
-
-
-
-
                     <li class="nav-item">
                         <a class="nav-link disabled" href="#" aria-disabled="true">Projects</a>
                     </li>
@@ -179,7 +172,7 @@
 
     <div class="container col-md-12 mt-5">
             <h2>Projects</h2>
-                <p class="opacity-75 lead">Our teams leverage research developments across domains to build tools and technology that impact billions of people. Sharing our learnings and tools to fuel progress in the field is core to our approach.</p>
+                <p class="opacity-75 lead">Advancing sustainable mobility and urban equity through data-driven planning and governance in cities of all sizes.</p>
 
     </div>
     <hr class="featurette-divider">
@@ -222,41 +215,64 @@
             return container;
         }
 
-        dataList.forEach((data, index) => {
-            const row = document.createElement('div');
-            row.className = 'row featurette';
+        // Sort dataList by Year in descending order
+dataList.sort((a, b) => {
+    const yearA = a.Year ? parseInt(a.Year.toString().match(/\d{4}/)?.[0]) || 0 : 0;
+    const yearB = b.Year ? parseInt(b.Year.toString().match(/\d{4}/)?.[0]) || 0 : 0;
+    return yearB - yearA; // Sort in descending order (newest first)
+});
 
-            const col1 = document.createElement('div');
-            col1.className = 'col-md-6';
+dataList.forEach((data, index) => {
+    const row = document.createElement('div');
+    row.className = 'row featurette';
 
-            const col2 = document.createElement('div');
-            col2.className = 'col-md-6';
+    const col1 = document.createElement('div');
+    col1.className = 'col-md-6';
 
-            if (index % 2 === 0) {
-                col1.innerHTML = `
-                    <h3 class="fw-normal lh-1">${data.Title}</h3>
-                    <p class="">${data["Short description"]}</p>
-                    <hr>
-                    <p><strong>Principle investigators</strong>: ${data["Principle investigators"]}</p>
-                `;
-                col2.innerHTML = `<img src="${GenerateImageDirect(data["Image"])}" class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" width="100%" height="300" alt="Featured Image">`;
-            } else {
-                col2.classList.add('order-md-2');
-                col1.classList.add('order-md-1');
-                col2.innerHTML = `
-                    <h3 class="fw-normal lh-1">${data.Title}</h3>
-                    <p class="">${data["Short description"]}</p>
-                    <hr>
-                    <p><strong>Principle investigators</strong>: ${data["Principle investigators"]}</p>
-                `;
-                col1.innerHTML = `<img src="${GenerateImageDirect(data["Image"])}" class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" width="100%" height="300" alt="Featured Image">`;
-            }
+    const col2 = document.createElement('div');
+    col2.className = 'col-md-6';
 
-            row.appendChild(col1);
-            row.appendChild(col2);
-            container.appendChild(row);
-            container.appendChild(document.createElement('hr')).className = "featurette-divider";
-        });
+    let year = data['Year'];
+    if (year) {
+        // Extract year from date string if it's a date
+        year = year.toString().match(/\d{4}/)?.[0] || year;
+    }
+
+    if (index % 2 === 0) {
+        col1.innerHTML = `
+            <h3 class="fw-normal lh-1">
+              <a href="${data.Link}" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+                ${data.Title}
+              </a>
+            </h3>
+            <h5>${year}</h5>
+            <p class="">${data["Short description"]}</p>
+            <hr>
+            <p><strong>Principle investigators</strong>: ${data["Principle investigators"]}</p>
+        `;
+        col2.innerHTML = `<img src="${GenerateImageDirect(data["Image"])}" class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" width="100%" height="300" alt="Featured Image">`;
+    } else {
+        col2.classList.add('order-md-2');
+        col1.classList.add('order-md-1');
+        col2.innerHTML = `
+            <h3 class="fw-normal lh-1">
+              <a href="${data.Link}" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+                ${data.Title}
+              </a>
+            </h3>
+            <h5>${year}</h5>
+            <p class="">${data["Short description"]}</p>
+            <hr>
+            <p><strong>Principle investigators</strong>: ${data["Principle investigators"]}</p>
+        `;
+        col1.innerHTML = `<img src="${GenerateImageDirect(data["Image"])}" class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" width="100%" height="300" alt="Featured Image">`;
+    }
+
+    row.appendChild(col1);
+    row.appendChild(col2);
+    container.appendChild(row);
+    container.appendChild(document.createElement('hr')).className = "featurette-divider";
+});
 
         return container;
     }
