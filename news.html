@@ -235,7 +235,7 @@
 
                 let titleHtml = data.Title;
                 if (data.Link) {
-                    titleHtml = `<a href="${data.Link}" target="_blank" style="text-decoration: None;">${data.Title}</a>`;
+                    titleHtml = `<a href="news-details.html?${data.Link}" target="_blank" style="text-decoration: None;">${data.Title}</a>`;
                 }
 
                 let conferenceHtml = data['Conference name'];
