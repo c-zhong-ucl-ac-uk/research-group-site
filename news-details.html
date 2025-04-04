@@ -178,36 +178,26 @@
 <main>
 
     <div class="container col-md-12 mt-5">
-        <h2>Quantifying the nighttime economy–housing separation from a human activity standpoint: A case study in Shenzhen</h2>
-        <p class="">Li, Mingxiao, Wei Tu, Huan Tong, <a href="team-details.html">Jinzhou Cao</a>, Chen Zhong, Hengcai Zhang, Jiasong Zhu, and Qingquan Li. 2024</p>
-        <p><a class="btn btn-md btn-outline-primary" href="about.html">Copy Bibtex</a></p>
+        <h2 id="news-headline"></h2>
+        <p id="news-date"></p>
     </div>
-
-
-
-    <!-- Marketing messaging and featurettes
-    ================================================== -->
-    <!-- Wrap the rest of the page in another container to center all the content. -->
-
     <div class="container marketing">
 
         <!-- START THE FEATURETTES -->
         <hr class="featurette-divider">
 
         <div class="row featurette">
-            <div class="col-md-2">
-                <h3>Abstract</h3>
+            <div class="col-md-4">
+                <img id="news-image"> <br>
+                <div id="source-links"></div>
+                <br>
             </div>
-            <div class="col-md-10">
-                <p>Augmenting LLMs with context leads to improved performance across many applications. Despite much research on Retrieval Augmented Generation (RAG) systems, an open question is whether errors arise because LLMs fail to utilize the context from retrieval or the context itself is insufficient to answer the query. To shed light on this, we develop a new notion of sufficient context, along with a way to classify instances that have enough information to answer the query. We then use sufficient context to analyze several models and datasets. By stratifying errors based on context sufficiency, we find that proprietary LLMs (Gemini, GPT, Claude) excel at answering queries when the context is sufficient, but often output incorrect answers instead of abstaining when the context is not. On the other hand, open-source LLMs (Llama, Mistral, Gemma) hallucinate or abstain often, even with sufficient context. We further categorize cases when the context is useful, and improves accuracy, even though it does not fully answer the query and the model errs without the context. Building on our findings, we explore ways to reduce hallucinations in RAG systems, including a new selective generation method that leverages sufficient context information for guided abstention. Our method improves the fraction of correct answers among times where the model responds by 2--10% for Gemini, GPT, and Gemma.
-                </p>
+            <div class="col-md-8">
+                <p id="news-body"></p>
             </div>
         </div>
 
         <hr class="featurette-divider">
-
-        <!-- /END THE FEATURETTES -->
-
     </div><!-- /.container -->
 
 
@@ -218,6 +208,129 @@
     </footer>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    const tsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR8irgbaVQD_l9mxchyzISr1fRAmoDHX1ETBc2-OarO79JiZRl-SzesWxyxe4D0b8-r1b1iHbDB1Q_S/pub?output=tsv';
+
+    function GenerateImageDirect(url) {
+        const fileIdMatch = url.match(/(?:id=|\/d\/)([\w-]+)/);
+        const fileId = fileIdMatch ? fileIdMatch[1] : null;
+        if (fileId) {
+            return `https://lh3.googleusercontent.com/d/${fileId}=s4000?authuser=0`;
+        }
+        return 'default_image_url.jpg';
+    }
+
+    function getQueryParam(key) {
+        const params = new URLSearchParams(window.location.search);
+        return params.get(key) ? decodeURIComponent(params.get(key)) : null;
+    }
+
+    function displayNewsArticle(data) {
+        if (!data) {
+            document.getElementById('news-headline').innerText = 'Article not found';
+            return;
+        }
+
+        document.getElementById('news-headline').innerText = data.Headline || 'No headline';
+        document.getElementById('news-date').innerText = data.Date || '';
+
+        let bodyText = data.Body || '';
+        document.getElementById('news-body').innerText = bodyText;
+
+        // Set image
+        const imageSrc = data.Image ? GenerateImageDirect(data.Image) : 'placeholder.jpg';
+        const imageEl = document.getElementById('news-image');
+        imageEl.src = imageSrc;
+        imageEl.alt = data.Headline || 'Featured Image';
+        imageEl.className = "bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto";
+        imageEl.style.width = "100%";
+        imageEl.style.height = "auto";
+
+        // Convert links to anchors
+        let linksHtml = `<br/>References:<br/>`;
+        linksHtml += (data.Links || '').replace(
+            /(https?:\/\/[^\s]+|www\.[^\s]+)/gi,
+            (match) => {
+                const url = match.startsWith('http') ? match : `https://${match}`;
+                return `<a href="${url}" target="_blank">${match}</a><br>`;
+            }
+        );
+        document.getElementById('source-links').innerHTML = linksHtml;
+    }
+    function formatTimestamp(decodedTimestamp) {
+        // Step 1: Decode the URL-encoded timestamp
+        const decodedDate = decodeURIComponent(decodedTimestamp); // e.g., "2025-04-04T14:39:37"
+
+        // Step 2: Create a Date object from the decoded string
+        const dateObj = new Date(decodedDate);
+
+        // Step 3: Format the Date object into "4/4/2025 15:39:37" in UTC (to avoid timezone issues)
+        const formattedDate = `${dateObj.getUTCDate()}/${dateObj.getUTCMonth() + 1}/${dateObj.getUTCFullYear()} ${dateObj.getUTCHours()}:${dateObj.getUTCMinutes().toString().padStart(2, '0')}:${dateObj.getUTCSeconds().toString().padStart(2, '0')}`;
+
+        return formattedDate;
+    }
+    // Compare function that handles timestamp comparison within 1 hour tolerance
+    function compareTimestamps(timestamp1, timestamp2) {
+        // Decode URL-encoded timestamps
+        const decodedTimestamp1 = decodeURIComponent(timestamp1);
+        const decodedTimestamp2 = decodeURIComponent(timestamp2);
+
+        // Convert the decoded timestamps to Date objects
+        const dateObj1 = new Date(decodedTimestamp1);
+        const dateObj2 = new Date(decodedTimestamp2);
+
+        // Create new Date objects but set hours to 0 to exclude the hour from comparison
+        const normalizedDate1 = new Date(dateObj1.getFullYear(), dateObj1.getMonth(), dateObj1.getDate(), 0, dateObj1.getMinutes(), dateObj1.getSeconds());
+        const normalizedDate2 = new Date(dateObj2.getFullYear(), dateObj2.getMonth(), dateObj2.getDate(), 0, dateObj2.getMinutes(), dateObj2.getSeconds());
+
+        // Compare the dates (ignoring the hour)
+        return normalizedDate1.getTime() === normalizedDate2.getTime();
+    }
+
+    $(document).ready(function () {
+        const targetTimestamp = formatTimestamp(getQueryParam('timestamp')); // decoded value
+        console.log("Target Timestamp:", targetTimestamp);
+        if (!targetTimestamp) {
+            alert("No 'timestamp' parameter found in the URL.");
+            return;
+        }
+
+        $.get(tsvUrl, function (tsvData) {
+            const lines = tsvData.split('\n');
+            const headers = lines[0].split('\t').map(h => h.trim());
+            const jsonData = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                if (lines[i].trim() === '') continue;
+                const values = lines[i].split('\t');
+                const rowData = {};
+                for (let j = 0; j < headers.length; j++) {
+                    rowData[headers[j]] = values[j]?.trim() || '';
+                }
+                jsonData.push(rowData);
+            }
+
+            // Match based on decoded ISO timestamp and Active = yes
+            const matchingArticle = jsonData.find(item => {
+                // Use the compareTimestamps function to check if the timestamps match within 1 hour
+                return (
+                    compareTimestamps(item.Timestamp, targetTimestamp) &&  // Use compareTimestamps for matching logic
+                    item.Active.toLowerCase() === 'yes'  // Check if the article is active
+                );
+            });
+            console.log("jsonData Article:", jsonData);
+
+            displayNewsArticle(matchingArticle);
+
+        }).fail(function () {
+            alert("Error loading TSV data.");
+        });
+    });
+</script>
+
 
 </body>
 </html>

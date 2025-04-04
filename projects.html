@@ -240,7 +240,6 @@ dataList.forEach((data, index) => {
         year = year.toString().match(/\d{4}/)?.[0] || year;
     }
 
-    if (index % 2 === 0) {
         col1.innerHTML = `
             <h3 class="fw-normal lh-1">
               <a href="${data.Link}" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
@@ -253,22 +252,6 @@ dataList.forEach((data, index) => {
             <p><strong>Principle investigators</strong>: ${data["Principle investigators"]}</p>
         `;
         col2.innerHTML = `<img src="${GenerateImageDirect(data["Image"])}" class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" width="100%" height="300" alt="Featured Image">`;
-    } else {
-        col2.classList.add('order-md-2');
-        col1.classList.add('order-md-1');
-        col2.innerHTML = `
-            <h3 class="fw-normal lh-1">
-              <a href="${data.Link}" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
-                ${data.Title}
-              </a>
-            </h3>
-            <h5>${year}</h5>
-            <p class="">${data["Short description"]}</p>
-            <hr>
-            <p><strong>Principle investigators</strong>: ${data["Principle investigators"]}</p>
-        `;
-        col1.innerHTML = `<img src="${GenerateImageDirect(data["Image"])}" class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" width="100%" height="300" alt="Featured Image">`;
-    }
 
     row.appendChild(col1);
     row.appendChild(col2);

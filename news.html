@@ -178,8 +178,8 @@
 <main>
 
     <div class="container col-md-12 mt-5">
-            <h2>Presentations</h2>
-                <p class="opacity-75 lead">Our team actively presents at conferences and seminars, sharing our research, foster collaboration, and drive progress.</p>
+            <h2>News</h2>
+                <p class="opacity-75 lead">Important updates, including tutorials, seminars, and announcements, keeping community informed about the latest developments and opportunities.</p>
 
     </div>
     <hr class="featurette-divider">
@@ -203,7 +203,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    const tsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTORqQ0IKcLNuulWcYKABBCvMubmEgNVGXmuHYP-jFz_BGxGw2jkhcaFYlC8AJ7dzk8DJPcMKYwlPhG/pub?output=tsv';
+    const tsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR8irgbaVQD_l9mxchyzISr1fRAmoDHX1ETBc2-OarO79JiZRl-SzesWxyxe4D0b8-r1b1iHbDB1Q_S/pub?output=tsv';
     function GenerateImageDirect(url){
 
             const fileIdMatch = url.match(/(?:id=|\/d\/)([\w-]+)/); // Extract file ID
@@ -214,60 +214,101 @@
             return 'default_image_url.jpg'; // Fallback URL for missing images
     }
     function generateItems(dataList) {
-        const container = document.createElement('div');
-        container.className = 'container';
+    const container = document.createElement('div');
+    container.className = 'container';
 
-        if (!Array.isArray(dataList)) {
-            console.error("Input must be an array.");
-            return container;
-        }
-
-        dataList.forEach((data, index) => {
-            if (data.Active && data.Active.toLowerCase() === 'yes') { // Check for Active = yes
-                const row = document.createElement('div');
-                row.className = 'row featurette';
-
-                const col1 = document.createElement('div');
-                col1.className = 'col-md-8';
-
-                const col2 = document.createElement('div');
-                col2.className = 'col-md-4';
-
-                let titleHtml = data.Title;
-                if (data.Link) {
-                    titleHtml = `<a href="news-details.html?${data.Link}" target="_blank" style="text-decoration: None;">${data.Title}</a>`;
-                }
-
-                let conferenceHtml = data['Conference name'];
-                if (data['Conference link']) {
-                    conferenceHtml = `<a href="${data['Conference link']}" target="_blank">${data['Conference name']}</a>`;
-                }
-
-                col1.innerHTML = `
-                    <h4 class="fw-normal lh-1">${titleHtml}</h4>
-                    <p>${conferenceHtml}</p>
-                    <p>Authors: ${data.Authors}</p>
-                    <p>${data.Keywards}</p>
-                `;
-                col2.innerHTML = `<img src="${GenerateImageDirect(data.Image)}" class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" width="100%" height="200" alt="Featured Image">`;
-
-                if (index % 2 !== 0) {
-                    col2.classList.add('order-md-2');
-                    col1.classList.add('order-md-1');
-                }else{
-                    col2.classList.add('order-md-1');
-                    col1.classList.add('order-md-2');
-                }
-
-                row.appendChild(col1);
-                row.appendChild(col2);
-                container.appendChild(row);
-                container.appendChild(document.createElement('hr')).className = "featurette-divider";
-            }
-        });
-
+    if (!Array.isArray(dataList)) {
+        console.error("Input must be an array.");
         return container;
     }
+    function createNewsDetailLink(rawDateString) {
+        // Step 1: Parse the date string into a Date object
+        const dateObj = new Date(rawDateString);
+
+        // Step 2: Convert to ISO format without milliseconds and encode it
+        const isoString = dateObj.toISOString().split('.')[0]; // e.g., "2025-04-04T15:39:37"
+        const encoded = encodeURIComponent(isoString);
+
+        // Step 3: Construct final URL
+        return `news-details.html?timestamp=${encoded}`;
+    }
+    dataList.forEach((data, index) => {
+        if (data.Active && data.Active.toLowerCase() === 'yes') {
+            const row = document.createElement('div');
+            row.className = 'row featurette';
+
+            const col1 = document.createElement('div');
+            col1.className = 'col-md-8';
+
+            const col2 = document.createElement('div');
+            col2.className = 'col-md-4';
+
+            // Create the title link if Headline exists
+            const titleHtml = data.Headline
+                ? `<a href="${createNewsDetailLink(data.Timestamp)}" target="_blank" style="text-decoration: none;">${data.Headline}</a>`
+                : 'No Headline';
+
+            // Add body if available
+            const bodyHtml = data.Body
+                ? `<p>${data.Body}</p>`
+                : '';
+
+            // Safely get other fields
+            const dateHtml = data.Date ? `<br>Date: ${data.Date}` : '';
+            // Extract and convert links into anchor tags with line breaks
+
+            let linksHtml = ``;
+<!--            linksHtml += (data.Links || '').replace(-->
+<!--                /(https?:\/\/[^\s]+|www\.[^\s]+)/gi,-->
+<!--                (match) => {-->
+<!--                    const url = match.startsWith('http') ? match : `https://${match}`;-->
+<!--                    return `<a href="${url}" target="_blank">${match}</a><br>`;-->
+<!--                }-->
+<!--            );-->
+
+            const imageSrc = data.Image ? GenerateImageDirect(data.Image) : 'placeholder.jpg';
+
+            const maxWords = 150;
+            let bodyText = data.Body || '';
+            const words = bodyText.trim().split(/\s+/);
+            if (words.length > maxWords) {
+                bodyText = words.slice(0, maxWords).join(' ') + '...';
+            }
+            col1.innerHTML = `
+                <h4 class="fw-normal lh-1">${titleHtml}</h4>
+                ${bodyText}
+                <p>${dateHtml}</p>
+                <p>${linksHtml}</p>
+            `;
+
+            col2.innerHTML = `
+                <img src="${imageSrc}" class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" width="100%" height="200" alt="Featured Image">
+            `;
+
+            // Optional: alternate column order on even/odd
+            /*
+            if (index % 2 !== 0) {
+                col2.classList.add('order-md-2');
+                col1.classList.add('order-md-1');
+            } else {
+                col2.classList.add('order-md-1');
+                col1.classList.add('order-md-2');
+            }
+            */
+
+            row.appendChild(col1);
+            row.appendChild(col2);
+            container.appendChild(row);
+
+            const divider = document.createElement('hr');
+            divider.className = 'featurette-divider';
+            container.appendChild(divider);
+        }
+    });
+
+    return container;
+}
+
 
     $(document).ready(function() {
         $.get(tsvUrl, function(tsvData) {
