@@ -7,7 +7,9 @@ body {
   padding-bottom: 3rem;
   color: rgb(var(--bs-tertiary-color-rgb));
 }
-
+.container {
+  max-width: 1070px !important;
+}
 
 /* CUSTOMIZE THE CAROUSEL
 -------------------------------------------------- */
