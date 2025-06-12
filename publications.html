@@ -12,7 +12,6 @@
     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/carousel/">
 
 
-
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
 
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -242,7 +241,7 @@
                 const activeCityData = cityData.filter(row => row.Active && row.Active.toLowerCase() === "yes" && row['Title']);
 
                 if (activeCityData.length > 0) { // Only create table if there are active items
-                    const table = $('<table class="table"><thead><tr><th scope="col" colspan="2"><h4>' + city + '</h4></th></tr></thead><tbody></tbody></table>');
+                    const table = $('<table class="table"><thead><tr><th scope="col" colspan="2"><h5>' + city + '</h5></th></tr></thead><tbody></tbody></table>');
                     const tbody = table.find('tbody');
 
                     activeCityData.forEach((row, index) => {

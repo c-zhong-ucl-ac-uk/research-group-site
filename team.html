@@ -145,7 +145,7 @@
         }
 
         .profile-name {
-            font-size:19px;
+            font-size:16px;
             position: absolute;
             bottom: 0px;
             left: 0px;
@@ -157,8 +157,8 @@
 
         .profile-name a {
             color: white;
-            text-decoration: none;
-            font-weight: bold;
+<!--            text-decoration: none;-->
+<!--            font-weight: bold;-->
         }
         .profile-name p {
             color: white;
@@ -265,8 +265,8 @@
         <div class="row featurette">
             <div class="col-md-12">
                 <p id="filter-stats">Loading data...</p>
-                <hr>
-                <div class="row row-cols-1 row-cols-md-4 g-4" id="card-container">
+<!--                <hr>-->
+                <div id="card-container">
                 </div>
 
             </div>
@@ -299,13 +299,15 @@
             dataType: "text",
             success: function (data) {
                 const parsedData = parseCSV(data);
-                populateDropdowns(topicCounts, jobCounts);
-                populateCards(parsedData);
+                console.log(jobCounts);
+<!--                populateDropdowns(topicCounts, jobCounts);-->
+                populateCards(parsedData, jobCounts);
             },
             error: function () {
                 console.error("Failed to fetch the CSV data.");
             }
         });
+
          function populateDropdowns(topicCounts, jobCounts) {
             // Clear existing items from the dropdowns
             $('#topics-dropdown').empty();
@@ -357,7 +359,6 @@
           return text;
         }
 
-
         // Function to parse CSV data
         function parseCSV(data) {
             const lines = data.split("\n").map(line => line.trim()); // Remove unnecessary whitespace
@@ -381,13 +382,18 @@
                         }
                     }
 
-                    // Add unique jobs and count occurrences
+                    // Add unique jobs and count occurrences (handle comma-separated jobs)
                     if (obj.Job) {
-                        if (!jobCounts[obj.Job]) {
-                            jobCounts[obj.Job] = 1;
-                        } else {
-                            jobCounts[obj.Job]++;
-                        }
+                        const jobs = obj.Job.split(',').map(job => job.trim()); // Split by comma and trim whitespace
+                        jobs.forEach(job => {
+                            if (job) { // Only count non-empty jobs
+                                if (!jobCounts[job]) {
+                                    jobCounts[job] = 1;
+                                } else {
+                                    jobCounts[job]++;
+                                }
+                            }
+                        });
                     }
                 }
 
@@ -423,9 +429,13 @@
                     return false; // Exclude this item if topic doesn't match
                 }
 
-                // If 'job' parameter exists, filter by job
-                if (job && formatText(item.Job) !== job) {
-                    return false; // Exclude this item if job doesn't match
+                // If 'job' parameter exists, filter by job (handle comma-separated jobs)
+                if (job) {
+                    const jobs = item.Job ? item.Job.split(',').map(j => j.trim()) : [];
+                    const hasMatchingJob = jobs.some(j => formatText(j) === job);
+                    if (!hasMatchingJob) {
+                        return false; // Exclude this item if none of the jobs match
+                    }
                 }
 
                 return true; // Include item if all conditions are satisfied
@@ -433,90 +443,107 @@
 
         }
 
-        // Function to populate the cards with data from CSV
-        function populateCards(data) {
-            const container = $("#card-container");
-            const filterStats = $("#filter-stats");
-            container.empty(); // Clear existing content
+       // Function to populate the cards with data from CSV
+function populateCards(data, populateCards) {
+    const container = $("#card-container");
+    const filterStats = $("#filter-stats");
+    container.empty(); // Clear existing content
 
-            // Filter the data based on URL params (either topic or job)
-            const filteredData = filterDataByParam(data);
+    // Filter the data based on URL params (either topic or job)
+    const filteredData = filterDataByParam(data);
 
-            // Get the selected filter parameters
-            const topic = getURLParameter('topic');
-            const job = getURLParameter('job');
+    // Get the selected filter parameters
+    const topic = getURLParameter('topic');
+    const job = getURLParameter('job');
 
-            // Construct filter status text
-            let filterText = `${filteredData.length} ${filteredData.length === 1 ? 'Researcher' : 'Researchers'}`;
+    // Construct filter status text
+    let filterText = `${filteredData.length} ${filteredData.length === 1 ? 'Researcher' : 'Researchers'}`;
 
-            // Check if topic or job exists
-            if (topic) {
-                filterText += ` | Topic: ${decodeURIComponent(reverseFormatText(topic))}`;
-            }
-
-            if (job) {
-                filterText += ` | Job: ${decodeURIComponent(reverseFormatText(job))}`;
-            }
-
-            // Update the filter stats text
-<!--            filterStats.text(filterText);-->
-            filterStats.text("");
-
-            // Loop through the filtered data and create a card for each item
-           filteredData.forEach(item => {
-    const linkedinLink = item.Linkedin ? `<a href="${item.Linkedin}" target="_blank">Web</a>` : '';
-    const githubLink = item.Github ? `<a href="${item.Github}" target="_blank">GitHub</a>` : '';
-
-    let linksHTML = '';
-    if (linkedinLink || githubLink) {
-        linksHTML = `<div class="links">`;
-        if (linkedinLink) {
-            linksHTML += linkedinLink;
-        }
-        if (linkedinLink && githubLink) {
-            linksHTML += ' | ';
-        }
-        if (githubLink) {
-            linksHTML += githubLink;
-        }
-        linksHTML += `</div>`;
+    // Check if topic or job exists
+    if (topic) {
+        filterText += ` | Topic: ${decodeURIComponent(reverseFormatText(topic))}`;
     }
 
-    // Card HTML with collapse feature added
-    const cardHtml = `
-        <div class="col">
-            <div class="card profile-card">
-                <img src="${GenerateImageDirect(item.Image)}" class="card-img-top" alt="Profile Image">
+    if (job) {
+        filterText += ` | Job: ${decodeURIComponent(reverseFormatText(job))}`;
+    }
 
-                <div class="overlay">
-                    <div class="bio-text">${truncateText(item["Short Bio"], 150) || "No description available."}</div>
-                </div>
+    filterStats.text("");
 
-                <div class="profile-name">
-                    <a href="#" data-bs-toggle="collapse" data-bs-target="#collapse-${item.id}" aria-expanded="false" aria-controls="collapse-${item.id}">
-                        ${item.Name || "No Name"}
-                    </a>
-                    <br>
-                    <p>${item.Job}</p>
-                </div>
+    for (const key in jobCounts) {
+        // Filter the data first for this job key
+        const itemsForJob = filteredData.filter(item => {
+            if (!item.Job) return false;
+            return item.Job.split(',').map(j => j.trim()).includes(key);
+        });
 
-                <!-- Collapsible content -->
-                <div class="collapse" id="collapse-${item.id}">
-                    <div class="card-body">
-                        ${linksHTML}
+        // Only create jobContainer if there are items for this job
+        if (itemsForJob.length > 0) {
+            // Create job section with title
+            const jobSection = $(`<div class="job-section mb-5">
+                <h5 class="mb-3">${key} (${jobCounts[key]})</h5>
+            </div>`);
+
+            // Create a single row container for all cards in this job category
+            const rowContainer = $(`<div class="row row-cols-1 row-cols-md-3 g-4"></div>`);
+
+            // Loop through filtered items and create cards
+            itemsForJob.forEach(item => {
+                const linkedinLink = item.Linkedin ? `<a href="${item.Linkedin}" target="_blank">Web</a>` : '';
+                const githubLink = item.Github ? `<a href="${item.Github}" target="_blank">GitHub</a>` : '';
+
+                let linksHTML = '';
+                if (linkedinLink || githubLink) {
+                    linksHTML = `<p class="">`;
+                    if (linkedinLink) {
+                        linksHTML += linkedinLink;
+                    }
+                    if (linkedinLink && githubLink) {
+                        linksHTML += ' | ';
+                    }
+                    if (githubLink) {
+                        linksHTML += githubLink;
+                    }
+                    linksHTML += `</p>`;
+                }
+
+                // Create individual card wrapped in col div
+                const cardHtml = `
+                    <div class="col">
+                        <div class="card profile-card h-100">
+                            <img src="${GenerateImageDirect(item.Image)}" class="card-img-top" alt="Profile Image">
+
+                            <div class="overlay">
+                                <div class="bio-text">${truncateText(item["Long Bio"], 500) || "No description available."}</div>
+                            </div>
+
+                            <div class="profile-name">
+                                <p><strong>${item.Name || "No Name"}</strong>
+                                <br>
+                                ${item['Short Bio']}
+                                <br>
+                                ${linksHTML}
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    `;
+                `;
 
-    container.append(cardHtml);
-});
+                // Append card to the row container
+                rowContainer.append(cardHtml);
+            });
 
+            // Append the row to the job section
+            jobSection.append('<hr>'); // Add a horizontal line after each job section
+            jobSection.append(rowContainer);
+
+            // Append the complete job section to the main container
+            container.append(jobSection);
+        }
+    }
 
         }
     });
 </script>
-
 </body>
 </html>
