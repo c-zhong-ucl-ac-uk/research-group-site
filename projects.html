@@ -251,10 +251,10 @@ dataList.forEach((data, index) => {
                 ${data.Title}
               </a>
             </h5>
-            <h5>${year}</h5>
+            <h6><strong>${year}</strong></h6>
             <p class="">${data["Short description"]}</p>
             <hr>
-            <p><strong>Funder: </strong>: ${data["Principle investigators"]}</p>
+            <p><strong>Funder: </strong>${data["Principle investigators"]}</p>
         `;
         col2.innerHTML = `<img src="${GenerateImageDirect(data["Image"])}" class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" width="100%" height="300" alt="Featured Image">`;
 
