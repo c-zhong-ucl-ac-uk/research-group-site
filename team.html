@@ -514,7 +514,7 @@ function populateCards(data, populateCards) {
                             <img src="${GenerateImageDirect(item.Image)}" class="card-img-top" alt="Profile Image">
 
                             <div class="overlay">
-                                <div class="bio-text">${truncateText(item["Long Bio"], 500) || "No description available."}</div>
+                                <div class="bio-text">${truncateText(item["Long Bio"], 1000) || "No description available."}</div>
                             </div>
 
                             <div class="profile-name">
