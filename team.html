@@ -442,8 +442,17 @@
             });
 
         }
+function reorderJobCounts(jobCounts) {
+  const ordered = {};
+  ["Members", "Alumni", "Advisors"].forEach(key => {
+    if (key in jobCounts) {
+      ordered[key] = jobCounts[key];
+    }
+  });
+  return ordered;
+}
 
-       // Function to populate the cards with data from CSV
+// Function to populate the cards with data from CSV
 function populateCards(data, populateCards) {
     const container = $("#card-container");
     const filterStats = $("#filter-stats");
@@ -469,7 +478,7 @@ function populateCards(data, populateCards) {
     }
 
     filterStats.text("");
-
+    jobCounts = reorderJobCounts(jobCounts);
     for (const key in jobCounts) {
         // Filter the data first for this job key
         const itemsForJob = filteredData.filter(item => {

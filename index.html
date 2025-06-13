@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en" data-bs-theme="auto">
 <head><script src="https://getbootstrap.com/docs/5.3/assets/js/color-modes.js"></script>
@@ -19,7 +18,6 @@
 
     <link href="css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Favicons -->
     <link rel="apple-touch-icon" href="/docs/5.3/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
     <link rel="icon" href="/docs/5.3/assets/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
     <link rel="icon" href="/docs/5.3/assets/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
@@ -35,83 +33,83 @@
         }
 
         .bd-placeholder-img {
-          font-size: 1.125rem;
-          text-anchor: middle;
-          -webkit-user-select: none;
-          -moz-user-select: none;
-          user-select: none;
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
         }
 
         @media (min-width: 768px) {
-          .bd-placeholder-img-lg {
-            font-size: 3.5rem;
-          }
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
         }
 
         .b-example-divider {
-          width: 100%;
-          height: 3rem;
-          background-color: rgba(0, 0, 0, .1);
-          border: solid rgba(0, 0, 0, .15);
-          border-width: 1px 0;
-          box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+            width: 100%;
+            height: 3rem;
+            background-color: rgba(0, 0, 0, .1);
+            border: solid rgba(0, 0, 0, .15);
+            border-width: 1px 0;
+            box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
         }
 
         .b-example-vr {
-          flex-shrink: 0;
-          width: 1.5rem;
-          height: 100vh;
+            flex-shrink: 0;
+            width: 1.5rem;
+            height: 100vh;
         }
 
         .bi {
-          vertical-align: -.125em;
-          fill: currentColor;
+            vertical-align: -.125em;
+            fill: currentColor;
         }
 
         .nav-scroller {
-          position: relative;
-          z-index: 2;
-          height: 2.75rem;
-          overflow-y: hidden;
+            position: relative;
+            z-index: 2;
+            height: 2.75rem;
+            overflow-y: hidden;
         }
 
         .nav-scroller .nav {
-          display: flex;
-          flex-wrap: nowrap;
-          padding-bottom: 1rem;
-          margin-top: -1px;
-          overflow-x: auto;
-          text-align: center;
-          white-space: nowrap;
-          -webkit-overflow-scrolling: touch;
+            display: flex;
+            flex-wrap: nowrap;
+            padding-bottom: 1rem;
+            margin-top: -1px;
+            overflow-x: auto;
+            text-align: center;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
         }
 
         .btn-bd-primary {
-          --bd-violet-bg: #712cf9;
-          --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
+            --bd-violet-bg: #712cf9;
+            --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
 
-          --bs-btn-font-weight: 600;
-          --bs-btn-color: var(--bs-white);
-          --bs-btn-bg: var(--bd-violet-bg);
-          --bs-btn-border-color: var(--bd-violet-bg);
-          --bs-btn-hover-color: var(--bs-white);
-          --bs-btn-hover-bg: #6528e0;
-          --bs-btn-hover-border-color: #6528e0;
-          --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
-          --bs-btn-active-color: var(--bs-btn-hover-color);
-          --bs-btn-active-bg: #5a23c8;
-          --bs-btn-active-border-color: #5a23c8;
+            --bs-btn-font-weight: 600;
+            --bs-btn-color: var(--bs-white);
+            --bs-btn-bg: var(--bd-violet-bg);
+            --bs-btn-border-color: var(--bd-violet-bg);
+            --bs-btn-hover-color: var(--bs-white);
+            --bs-btn-hover-bg: #6528e0;
+            --bs-btn-hover-border-color: #6528e0;
+            --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
+            --bs-btn-active-color: var(--bs-btn-hover-color);
+            --bs-btn-active-bg: #5a23c8;
+            --bs-btn-active-border-color: #5a23c8;
         }
 
         .bd-mode-toggle {
-          z-index: 1500;
+            z-index: 1500;
         }
 
         .bd-mode-toggle .dropdown-menu .active .bi {
-          display: block !important;
+            display: block !important;
         }
 
-         #map { height: 500px; width: 100%; }
+         #map { height: 600px; width: 100%; }
 
         .controls {
             position: absolute;
@@ -123,10 +121,85 @@
             z-index: 999;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
+                .marker {
+            position: relative;
+            width: 20px;
+            height: 20px;
+            background: #4285f4;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+        }
+
+        .pulse {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            background: rgba(66, 133, 244, 0.3);
+            border-radius: 50%;
+            animation: pulse 2s ease-out infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                width: 20px;
+                height: 20px;
+                opacity: 1;
+            }
+            100% {
+                width: 60px;
+                height: 60px;
+                opacity: 0;
+            }
+        }
+
+        /* Custom popup styling for Leaflet */
+        .custom-popup .leaflet-popup-content-wrapper {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        .custom-popup .leaflet-popup-content {
+            margin: 20px;
+            min-width: 250px;
+            max-width: 300px;
+        }
+        .custom-popup .leaflet-popup-tip-container {
+            width: 20px;
+            height: 10px;
+        }
+        .custom-popup .leaflet-popup-tip {
+            background: white;
+            border: 1px solid #ddd;
+            border-top: none;
+            box-shadow: none;
+        }
+        .custom-popup h3 {
+            margin: 0 0 12px 0;
+            color: #333;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .custom-popup p {
+            margin: 0 0 14px 0;
+<!--            color: #666;-->
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        .custom-popup .popup-info {
+            color: #4285f4;
+            font-size: 12px;
+            margin-top: 10px;
+            text-align: center;
+        }
     </style>
 
 
-    <!-- Custom styles for this template -->
     <link href="css/carousel.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
@@ -141,7 +214,7 @@
     </symbol>
     <symbol id="moon-stars-fill" viewBox="0 0 16 16">
         <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/>
-        <path d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L13.863.1z"/>
+        <path d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774.258c.346-.115.617-.386.732-.732L13.863.1z"/>
     </symbol>
     <symbol id="sun-fill" viewBox="0 0 16 16">
         <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/>
@@ -152,7 +225,6 @@
     <nav class="navbar navbar-expand-md navbar-light fixed-top bg-white border-bottom">
         <div class="container-fluid">
             <a class="navbar-brand" href="index.html">
-<!--                <img src="images/LOGO_ERC.png" alt="realTRIPS Logo" width="35" height="35">-->
                 Urban Mobility Group
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -206,14 +278,10 @@
     </div>
 
 
-    <!-- Marketing messaging and featurettes
-    ================================================== -->
-    <!-- Wrap the rest of the page in another container to center all the content. -->
-
     <div class="container marketing">
         <div class="row">
             <div class="col-md-12" style="position: relative;">
-                <div id="map" style="width: 100%; height: 400px;"></div>
+                <div id="map"></div>
 
                 <div class="controls" style="
             position: absolute;
@@ -237,8 +305,7 @@
                     </label>
                 </div>
             </div>
-        </div>        <!-- /.row -->
-        <hr class="featurette-divider">
+        </div>        <hr class="featurette-divider">
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
@@ -274,8 +341,6 @@
                 </div>
             </div>
         </div>
-        <!-- START THE FEATURETTES -->
-
         <hr class="featurette-divider">
 
         <div class="row featurette">
@@ -326,21 +391,16 @@
 
         <hr class="featurette-divider">
 
-        <!-- /END THE FEATURETTES -->
-
-    </div><!-- /.container -->
-
-
-    <!-- FOOTER -->
-    <footer class="container">
-        <p class="float-end"><a href="#">Back to top</a></p>
-        <p>&copy; 2025 Urban Mobility Group, &middot; <a href="#">Contact</a></p>
-    </footer>
+    </div><footer class="container">
+    <p class="float-end"><a href="#">Back to top</a></p>
+    <p>&copy; 2025 Urban Mobility Group, &middot; <a href="#">Contact</a></p>
+</footer>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
     let regionPairs = [];
+
     fetch('data/SIP_camden_adjbbox_normed.json')
         .then(response => response.json())
         .then(data => {
@@ -348,29 +408,35 @@
         })
         .catch(error => console.error('Error loading region pairs:', error));
 
+    const mapCenter = [51.5220166, -0.136012];
     var map = L.map('map', {
-        zoomControl: false,         // Remove zoom control buttons
-        scrollWheelZoom: false,     // Disable zooming with the mouse wheel
-        doubleClickZoom: false,     // Disable zooming on double-click
-        touchZoom: false,           // Disable touch-based zooming
-        boxZoom: false              // Disable zooming with box selection
-    }).setView([51.54332, -0.15658], 14);
+        zoomControl: false,      // Remove zoom control buttons
+        scrollWheelZoom: false,  // Disable zooming with the mouse wheel
+        doubleClickZoom: false,  // Disable zooming on double-click
+        touchZoom: false,        // Disable touch-based zooming
+        boxZoom: false           // Disable zooming with box selection
+    }).setView(mapCenter, 15);
+
     L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CartoDB</a>'
     }).addTo(map);
 
-    // Assuming you have initialized a Leaflet map instance named `map`
-    const bounds = map.getBounds();
+    // --- Custom Marker and Popup ---
+    const customMarkerIcon = L.divIcon({
+        className: 'custom-marker',
+        html: `<div class="marker"><div class="pulse"></div></div>`,
+        iconSize: [20, 20],
+        iconAnchor: [10, 10]
+    });
 
-    // Bounding box coordinates
-    const bbox = {
-        north: bounds.getNorth(),
-        south: bounds.getSouth(),
-        east: bounds.getEast(),
-        west: bounds.getWest()
-    };
+    const popupContent = `
+        <h3>UCL Centre for Advanced Spatial Analysis (CASA)</h3>
+        <p><strong>Address: </strong>90 Tottenham Court Road, London, W1T 4TJ</p>
+    `;
 
-    console.log("Bounding Box:", bbox);
+    L.marker(mapCenter, { icon: customMarkerIcon })
+        .addTo(map)
+        .bindPopup(popupContent, { className: 'custom-popup' });
 
 
     function getColor(value) {
@@ -391,7 +457,7 @@
                         return {
                             fillColor: 'lightblue',
                             color: 'blue',
-                            weight: 2,
+                            weight: 1,
                             opacity: 0.8,
                             fillOpacity: 0.3
                         };
@@ -418,13 +484,13 @@
 
                             layer.setStyle({
                                 fillColor: color,
-                                weight: 3,
+                                weight: 1,
                                 fillOpacity: 0.7
                             });
                         } else {
                             layer.setStyle({
                                 fillColor: 'lightblue',
-                                weight: 2,
+                                weight: 1,
                                 fillOpacity: 0.3
                             });
                         }
@@ -463,7 +529,7 @@
 
                         const regionPair = regionPairs.find(pair => pair.source === regionCode || pair.target === regionCode);
                         if (regionPair) {
-                            value = regionPair[selectedMode.toLowerCase()];
+                            value = regionPair[selectedMode];
                         }
 
                         const color = getColor(value);
@@ -477,7 +543,6 @@
                 }
 
                 function getSelectedMode() {
-                    return 'SIP_bi';
                     const selectedRadio = document.querySelector('input[name="mode"]:checked');
                     return selectedRadio ? selectedRadio.value : 'SIP_bi';
                 }
