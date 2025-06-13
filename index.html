@@ -401,7 +401,7 @@
 <script>
     let regionPairs = [];
 
-    fetch('data/SIP_camden_adjbbox_normed.json')
+    fetch('data/SIP_CASA_0613_large.json')
         .then(response => response.json())
         .then(data => {
             regionPairs = data;
@@ -415,7 +415,7 @@
         doubleClickZoom: false,  // Disable zooming on double-click
         touchZoom: false,        // Disable touch-based zooming
         boxZoom: false           // Disable zooming with box selection
-    }).setView(mapCenter, 15);
+    }).setView(mapCenter, 14);
 
     L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CartoDB</a>'
@@ -485,7 +485,7 @@
                             layer.setStyle({
                                 fillColor: color,
                                 weight: 1,
-                                fillOpacity: 0.7
+                                fillOpacity: 0.5
                             });
                         } else {
                             layer.setStyle({
@@ -501,7 +501,7 @@
                     geojsonLayer.eachLayer(function (layer) {
                         layer.setStyle({
                             fillColor: 'lightblue',
-                            weight: 2,
+                            weight: 1,
                             fillOpacity: 0.3
                         });
                     });
