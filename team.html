@@ -120,58 +120,73 @@
             height: 350px; /* Square shape */
             object-fit: cover;
         }
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    padding: 20px;
+    overflow-y: auto;
+    pointer-events: none;
 
-        .overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start; /* Align text to the left */
-            text-align: left; /* Ensure text is aligned to the left */
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
-            padding: 20px;
-        }
+    /* Hide scrollbar but allow scrolling */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+   }
 
-        .profile-card:hover .overlay {
-            opacity: 1;
-            cursor: pointer;
+.profile-card:hover .overlay {
+    opacity: 1;
+    cursor: pointer;
+    pointer-events: auto; /* Enable interaction when visible */
+}
 
-        }
+.profile-name {
+    font-size: 16px;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 14px;
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+}
 
-        .profile-name {
-            font-size:16px;
-            position: absolute;
-            bottom: 0px;
-            left: 0px;
-            right: 0px;
-            width:100%;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 14px;
-        }
+/* Hide profile-name when hovering over the card */
+.profile-card:hover .profile-name {
+    opacity: 0;
+    pointer-events: none; /* Prevent clicks when hidden */
+}
 
-        .profile-name a {
-            color: white;
-<!--            text-decoration: none;-->
-<!--            font-weight: bold;-->
-        }
-        .profile-name p {
-            color: white;
-            text-decoration: none;
-            margin-bottom:0;
-        }
+.profile-name a {
+    color: white;
+    /* text-decoration: none; */
+    /* font-weight: bold; */
+}
 
-        .overlay a {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-            margin-top: 10px;
-        }
+.profile-name p {
+    color: white;
+    text-decoration: none;
+    margin-bottom: 0;
+}
+
+.overlay a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
     </style>
 
 
@@ -288,7 +303,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     $(document).ready(function () {
-        const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTPbpxDo8NerXQ7B9naVtr84J6YtuHhJs_bGquR9tZauflb5rEjJa5XSkLvmpvp_Eq6Ft6CoUXmG4Uz/pub?output=csv&t="+ new Date().getTime();
+        const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTPbpxDo8NerXQ7B9naVtr84J6YtuHhJs_bGquR9tZauflb5rEjJa5XSkLvmpvp_Eq6Ft6CoUXmG4Uz/pub?output=tsv&t="+ new Date().getTime();
 
         // Initialize objects to store topics and jobs with counts
         const topicCounts = {};
@@ -298,9 +313,8 @@
             url: csvUrl,
             dataType: "text",
             success: function (data) {
-                const parsedData = parseCSV(data);
-                console.log(jobCounts);
-<!--                populateDropdowns(topicCounts, jobCounts);-->
+                const parsedData = parseTSV(data);
+                console.log("jobCounts Data:", jobCounts);
                 populateCards(parsedData, jobCounts);
             },
             error: function () {
@@ -359,47 +373,44 @@
           return text;
         }
 
-        // Function to parse CSV data
-        function parseCSV(data) {
-            const lines = data.split("\n").map(line => line.trim()); // Remove unnecessary whitespace
-            const headers = lines[0].split(",");
-            const rows = lines.slice(1).map(line => line.split(","));
+    // Function to parse TSV data
+    function parseTSV(data) {
+        const lines = data.split("\n").map(line => line.trim()); // Remove unnecessary whitespace
+        const headers = lines[0].split("\t");
+        const rows = lines.slice(1).map(line => line.split("\t"));
 
-            // Return array of objects
-            return rows.map(row => {
-                const obj = {};
-                headers.forEach((header, index) => {
-                    obj[header.trim()] = row[index]?.trim();  // Handle empty or undefined values safely
-                });
-                // Count only objects that are active
-                if (obj.Active.toLowerCase() === "yes") {
-                    // Add unique topics and count occurrences
-                    if (obj.Topic) {
-                        if (!topicCounts[obj.Topic]) {
-                            topicCounts[obj.Topic] = 1;
-                        } else {
-                            topicCounts[obj.Topic]++;
-                        }
-                    }
+        // Initialize counts
+        const topicCounts = {};
 
-                    // Add unique jobs and count occurrences (handle comma-separated jobs)
-                    if (obj.Job) {
-                        const jobs = obj.Job.split(',').map(job => job.trim()); // Split by comma and trim whitespace
-                        jobs.forEach(job => {
-                            if (job) { // Only count non-empty jobs
-                                if (!jobCounts[job]) {
-                                    jobCounts[job] = 1;
-                                } else {
-                                    jobCounts[job]++;
-                                }
-                            }
-                        });
-                    }
+        // Return array of objects
+        return rows.map(row => {
+            const obj = {};
+            headers.forEach((header, index) => {
+                obj[header.trim()] = row[index]?.trim(); // Handle empty or undefined values safely
+            });
+
+            // Count only objects that are active
+            if (obj.Active?.toLowerCase() === "yes") {
+                // Add unique topics and count occurrences
+                if (obj.Topic) {
+                    topicCounts[obj.Topic] = (topicCounts[obj.Topic] || 0) + 1;
                 }
 
+                // Add unique jobs and count occurrences (handle comma-separated jobs)
+                if (obj.Job) {
+                    const jobs = obj.Job.split(',').map(job => job.trim()); // Split by comma and trim whitespace
+
+                    jobs.forEach(job => {
+                        if (job) {
+                            jobCounts[job] = (jobCounts[job] || 0) + 1;
+                        }
+                    });
+                }
+            }
                 return obj;
             });
         }
+
 
         // Function to generate the direct image URL from Google Drive
         function GenerateImageDirect(url){
@@ -453,7 +464,7 @@ function reorderJobCounts(jobCounts) {
 }
 
 // Function to populate the cards with data from CSV
-function populateCards(data, populateCards) {
+function populateCards(data, jobCounts) {
     const container = $("#card-container");
     const filterStats = $("#filter-stats");
     container.empty(); // Clear existing content
@@ -479,6 +490,7 @@ function populateCards(data, populateCards) {
 
     filterStats.text("");
     jobCounts = reorderJobCounts(jobCounts);
+    console.log("Job Counts:", jobCounts);
     for (const key in jobCounts) {
         // Filter the data first for this job key
         const itemsForJob = filteredData.filter(item => {
@@ -523,7 +535,7 @@ function populateCards(data, populateCards) {
                             <img src="${GenerateImageDirect(item.Image)}" class="card-img-top" alt="Profile Image">
 
                             <div class="overlay">
-                                <div class="bio-text">${truncateText(item["Long Bio"], 1000) || "No description available."}</div>
+                                <div class="bio-text">${item["Long Bio"] || "No description available."}</div>
                             </div>
 
                             <div class="profile-name">
