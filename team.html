@@ -444,7 +444,7 @@
         }
 function reorderJobCounts(jobCounts) {
   const ordered = {};
-  ["Members", "Alumni", "Advisors"].forEach(key => {
+  ["Members", "Alumni", "Advisors", "Collaborators"].forEach(key => {
     if (key in jobCounts) {
       ordered[key] = jobCounts[key];
     }
