@@ -732,20 +732,20 @@
             // Sequential chain with correct function calls
             $.get(newsUrl).then(tsv => {
                 const newsData = parseTSV(tsv);
-                const newsItems = generateNewsHTML(newsData);
+                const newsItems = generateNewsHTML(newsData, "news.html");
                 const newsWithImageItems = generateNewsWithImageHTML(newsData);
                 $('#news-container').append(newsItems);
                 $('#news-with-image-container').append(newsWithImageItems);
             }).then(() => {
                 return $.get(publicationsUrl).then(tsv => {
                     const pubData = parseTSV(tsv);
-                    const pubItems = generatePublicationHTML(pubData.slice(0, 3));
+                    const pubItems = generatePublicationHTML(pubData.slice(0, 3), "publications.html");
                     $('#publications-container').append(pubItems);
                 });
             }).then(() => {
                 return $.get(presentationsUrl).then(tsv => {
                     const presData = parseTSV(tsv);
-                    const presItems = generatePresentationHTML(presData);
+                    const presItems = generatePresentationHTML(presData, "presentations.html");
                     const presWithImageItems = generatePresentationWithImageHTML(presData);
                     $('#presentations-container').append(presItems);
                     $('#presentations-with-image-container').append(presWithImageItems);
