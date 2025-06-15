@@ -201,6 +201,10 @@
             margin-top: 10px;
             text-align: center;
         }
+
+        .navbar .container-fluid {
+            max-width: 1075px; /* Adjust this value as needed */
+        }
     </style>
 
 
@@ -395,12 +399,12 @@
 
         const mapCenter = [51.5220166, -0.136012];
         var map = L.map('map', {
-            zoomControl: false,      // Remove zoom control buttons
+            zoomControl: true,      // Remove zoom control buttons
             scrollWheelZoom: false,  // Disable zooming with the mouse wheel
             doubleClickZoom: false,  // Disable zooming on double-click
             touchZoom: false,        // Disable touch-based zooming
             boxZoom: false           // Disable zooming with box selection
-        }).setView(mapCenter, 14);
+        }).setView(mapCenter, 12);
 
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CartoDB</a>'
