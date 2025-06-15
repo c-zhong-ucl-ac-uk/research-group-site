@@ -537,7 +537,7 @@
             .catch(error => console.error('Error loading GeoJSON: ', error));
 
 
-        // main content
+            // main content
             const newsUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR8irgbaVQD_l9mxchyzISr1fRAmoDHX1ETBc2-OarO79JiZRl-SzesWxyxe4D0b8-r1b1iHbDB1Q_S/pub?output=tsv';
             const publicationsUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQRgLVjhKj9bGisYFNxW_AqvyfYQh4_3JsitOB8XRiwdX1tdBtwzq2MKKyY9a9sm8eltKqeqSLcRRYr/pub?output=tsv';
             const presentationsUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTORqQ0IKcLNuulWcYKABBCvMubmEgNVGXmuHYP-jFz_BGxGw2jkhcaFYlC8AJ7dzk8DJPcMKYwlPhG/pub?output=tsv';
@@ -550,51 +550,75 @@
                     }
                     return 'default_image_url.jpg'; // Fallback URL for missing images
             }
-              function generatePresentationHTML(data, allLink = "#") {
+            function generatePresentationHTML(data, allLink = "#") {
                 let html = '<div class=""><h5>Latest Presentations</h5><hr>\n';
 
                 let skippedFirstImage = false;
+                let count = 0;
 
-                data.forEach(item => {
-                    // Skip the first item that has an image
+                for (let i = 0; i < data.length; i++) {
+                    const item = data[i];
+
+                    // Skip the first item with an image
                     if (item.Image && item.Image.trim() !== '' && !skippedFirstImage) {
                         skippedFirstImage = true;
-                        return; // Skip this item
+                        continue;
                     }
 
-                    html += `    <h6 class="fw-normal lh-1"><a href="">${escapeHtml(item.Title)}</a></h6>\n`;
+                    html += `    <h6 class="fw-normal lh-1"><a href="${escapeHtml(item.URL || '#')}">${escapeHtml(item.Title)}</a></h6>\n`;
                     html += `    <p>${escapeHtml(item['Conference name'])}</p>\n`;
-                });
+                    count++;
 
+                    if (count === 3) {
+                        html += '    <hr>\n';
+                        html += `    <a href="${allLink}">See all presentations</a>\n`;
+                        html += '</div>';
+                        return html;
+                    }
+                }
+
+                // If fewer than 3 items found
                 html += '    <hr>\n';
-                html += `    <a href="presentations.html">See all presentations</a>\n`;
+                html += `    <a href="${allLink}">See all presentations</a>\n`;
                 html += '</div>';
-
                 return html;
             }
 
-           function generateNewsHTML(data, allLink = "#") {
-            let html = '<div class=""><h5>Latest News</h5><hr>\n';
 
-            let skippedFirstImage = false;
+            function generateNewsHTML(data, allLink = "#") {
+                let html = '<div class=""><h5>Latest News</h5><hr>\n';
 
-            data.forEach(item => {
-                // Skip the first item that has an image
-                if (item.Image && item.Image.trim() !== '' && !skippedFirstImage) {
-                    skippedFirstImage = true;
-                    return; // Skip this item
+                let skippedFirstImage = false;
+                let count = 0;
+
+                for (let i = 0; i < data.length; i++) {
+                    const item = data[i];
+
+                    // Skip the first item with an image
+                    if (item.Image && item.Image.trim() !== '' && !skippedFirstImage) {
+                        skippedFirstImage = true;
+                        continue;
+                    }
+
+                    html += `    <h6 class="fw-normal lh-1"><a href="${escapeHtml(item.URL || '#')}">${escapeHtml(item.Headline)}</a></h6>\n`;
+                    html += `    <p>${escapeHtml(item.Body).substring(0, 130)}...</p>\n`;
+                    count++;
+
+                    if (count === 3) {
+                        html += '    <hr>\n';
+                        html += `    <a href="${allLink}">See all news</a>\n`;
+                        html += '</div>';
+                        return html;
+                    }
                 }
 
-                html += `    <h6 class="fw-normal lh-1"><a href="">${escapeHtml(item.Headline)}</a></h6>\n`;
-                html += `    <p>${escapeHtml(item.Body).substring(0, 130)}...</p>\n`;
-            });
+                // If fewer than 3 items found
+                html += '    <hr>\n';
+                html += `    <a href="${allLink}">See all news</a>\n`;
+                html += '</div>';
+                return html;
+            }
 
-            html += '    <hr>\n';
-            html += `    <a href="news.html">See all news</a>\n`;
-            html += '</div>';
-
-            return html;
-        }
 
        function generateNewsWithImageHTML(data) {
             if (!data || data.length === 0) return;
@@ -705,13 +729,13 @@
                 $('#news-with-image-container').append(newsWithImageItems);
             }).then(() => {
                 return $.get(publicationsUrl).then(tsv => {
-                    const pubData = parseTSV(tsv).slice(0, 3);
-                    const pubItems = generatePublicationHTML(pubData);
+                    const pubData = parseTSV(tsv);
+                    const pubItems = generatePublicationHTML(pubData.slice(0, 3));
                     $('#publications-container').append(pubItems);
                 });
             }).then(() => {
                 return $.get(presentationsUrl).then(tsv => {
-                    const presData = parseTSV(tsv).slice(0, 3);
+                    const presData = parseTSV(tsv);
                     const presItems = generatePresentationHTML(presData);
                     const presWithImageItems = generatePresentationWithImageHTML(presData);
                     $('#presentations-container').append(presItems);
