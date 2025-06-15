@@ -313,7 +313,8 @@
                     </label>
                 </div>
             </div>
-        </div>        <hr class="featurette-divider">
+        </div>
+        <hr class="featurette-divider">
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
@@ -345,33 +346,28 @@
                 </div>
             </div>
         </div>
-        <hr class="featurette-divider">
+        <p class="featurette-divider">
 
         <div class="row featurette">
             <div class="col-md-6" id="news-container">
             </div>
-            <div class="col-md-6">
-                <svg class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" width="100%" height="300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: 500x500" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="var(--bs-secondary-bg)"/><text x="50%" y="50%" fill="var(--bs-secondary-color)" dy=".3em">630x300</text></svg>
+            <div class="col-md-6" id="news-with-image-container">
             </div>
         </div>
 
-        <hr class="featurette-divider">
+        <p class="featurette-divider">
 
         <div class="row featurette">
-            <div class="col-md-6 order-md-2" id="publications-container">
-            </div>
-            <div class="col-md-6 order-md-1">
-                <svg class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" width="100%" height="300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: 500x500" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="var(--bs-secondary-bg)"/><text x="50%" y="50%" fill="var(--bs-secondary-color)" dy=".3em">630x300</text></svg>
+            <div class="col-md-12 order-md-1" id="publications-container">
             </div>
         </div>
 
-        <hr class="featurette-divider">
+        <p class="featurette-divider">
 
         <div class="row featurette">
-            <div class="col-md-6" id="presentations-container">
+            <div class="col-md-6 order-md-2" id="presentations-container">
             </div>
-            <div class="col-md-6">
-                <svg class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" width="100%" height="300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: 500x500" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="var(--bs-secondary-bg)"/><text x="50%" y="50%" fill="var(--bs-secondary-color)" dy=".3em">630x300</text></svg>
+            <div class="col-md-6 order-md-1" id="presentations-with-image-container">
             </div>
         </div>
 
@@ -545,11 +541,27 @@
             const newsUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR8irgbaVQD_l9mxchyzISr1fRAmoDHX1ETBc2-OarO79JiZRl-SzesWxyxe4D0b8-r1b1iHbDB1Q_S/pub?output=tsv';
             const publicationsUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQRgLVjhKj9bGisYFNxW_AqvyfYQh4_3JsitOB8XRiwdX1tdBtwzq2MKKyY9a9sm8eltKqeqSLcRRYr/pub?output=tsv';
             const presentationsUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTORqQ0IKcLNuulWcYKABBCvMubmEgNVGXmuHYP-jFz_BGxGw2jkhcaFYlC8AJ7dzk8DJPcMKYwlPhG/pub?output=tsv';
+            function GenerateImageDirect(url){
 
-            function generatePresentationHTML(data, allLink = "#") {
+                    const fileIdMatch = url.match(/(?:id=|\/d\/)([\w-]+)/); // Extract file ID
+                    const fileId = fileIdMatch ? fileIdMatch[1] : null;
+                    if (fileId) {
+                        return `https://lh3.googleusercontent.com/d/${fileId}=s4000?authuser=0`;
+                    }
+                    return 'default_image_url.jpg'; // Fallback URL for missing images
+            }
+              function generatePresentationHTML(data, allLink = "#") {
                 let html = '<div class=""><h5>Latest Presentations</h5><hr>\n';
 
+                let skippedFirstImage = false;
+
                 data.forEach(item => {
+                    // Skip the first item that has an image
+                    if (item.Image && item.Image.trim() !== '' && !skippedFirstImage) {
+                        skippedFirstImage = true;
+                        return; // Skip this item
+                    }
+
                     html += `    <h6 class="fw-normal lh-1"><a href="">${escapeHtml(item.Title)}</a></h6>\n`;
                     html += `    <p>${escapeHtml(item['Conference name'])}</p>\n`;
                 });
@@ -561,22 +573,80 @@
                 return html;
             }
 
-            function generateNewsHTML(data, allLink = "#") {
-                let html = '<div class=""><h5>Latest News</h5><hr>\n';
+           function generateNewsHTML(data, allLink = "#") {
+            let html = '<div class=""><h5>Latest News</h5><hr>\n';
 
-                data.forEach(item => {
-                    html += `    <h6 class="fw-normal lh-1"><a href="">${escapeHtml(item.Headline)}</a></h6>\n`;
-                    html += `    <p>${escapeHtml(item.Body).substring(0, 130)}...</p>\n`;
-                });
+            let skippedFirstImage = false;
 
-                html += '    <hr>\n';
-                html += `    <a href="news.html">See all news</a>\n`;
-                html += '</div>';
+            data.forEach(item => {
+                // Skip the first item that has an image
+                if (item.Image && item.Image.trim() !== '' && !skippedFirstImage) {
+                    skippedFirstImage = true;
+                    return; // Skip this item
+                }
 
-                return html;
-            }
+                html += `    <h6 class="fw-normal lh-1"><a href="">${escapeHtml(item.Headline)}</a></h6>\n`;
+                html += `    <p>${escapeHtml(item.Body).substring(0, 130)}...</p>\n`;
+            });
 
-            function generatePublicationHTML(data, allLink = "#") {
+            html += '    <hr>\n';
+            html += `    <a href="news.html">See all news</a>\n`;
+            html += '</div>';
+
+            return html;
+        }
+
+       function generateNewsWithImageHTML(data) {
+            if (!data || data.length === 0) return;
+
+
+
+            // Find the first item that has an Image property
+            const item = data.find(item => item.Image && item.Image.trim() !== '');
+
+            // If no item with image is found, return nothing
+            if (!item) return;
+            // Generate the HTML for the news item with image
+            const imageSrc = item.Image ? GenerateImageDirect(item.Image) : 'placeholder.jpg';
+
+            const html = `
+                <div class="">
+                    <img src="${imageSrc}" alt="" class="img-fluid mb-2" style="width: 100%; height: 300px; object-fit: cover;">
+                    <h6 class="fw-normal lh-1">
+                        <a href="${escapeHtml(item.Link || '#')}">${escapeHtml(item.Headline)}</a>
+                    </h6>
+                    <p>${escapeHtml(item.Body).substring(0, 130)}...</p>
+                </div>
+            `;
+
+            return html;
+        }
+         function generatePresentationWithImageHTML(data) {
+            if (!data || data.length === 0) return;
+
+            // Find the first item that has an Image property
+            const item = data.find(item => item.Image && item.Image.trim() !== '');
+
+            // If no item with image is found, return nothing
+            if (!item) return;
+
+            // Generate the HTML for the presentation item with image
+            const imageSrc = item.Image ? GenerateImageDirect(item.Image) : 'placeholder.jpg';
+
+            const html = `
+                <div class="">
+                    <img src="${imageSrc}" alt="" class="img-fluid mb-2" style="width: 100%; height: 300px; object-fit: cover;">
+                    <h6 class="fw-normal lh-1">
+                        <a href="${escapeHtml(item.Link || '#')}">${escapeHtml(item.Title)}</a>
+                    </h6>
+                    <p>${escapeHtml(item['Conference name'])}</p>
+                </div>
+            `;
+
+            return html;
+         }
+
+        function generatePublicationHTML(data, allLink = "#") {
                 let html = '<div class=""><h5>Latest Publications</h5><hr>\n';
 
                 data.forEach(item => {
@@ -622,29 +692,30 @@
                 jsonData.sort((a, b) => new Date(b['Timestamp']) - new Date(a['Timestamp']));
 
                 // Return only the newest 3
-                return jsonData.slice(0, 3);
+                return jsonData;
             }
 
 
             // Sequential chain with correct function calls
             $.get(newsUrl).then(tsv => {
                 const newsData = parseTSV(tsv);
-                console.log("News Data:", newsData);  // Debugging line
-                const newsItems = generateNewsHTML(newsData);  // corrected function name
+                const newsItems = generateNewsHTML(newsData);
+                const newsWithImageItems = generateNewsWithImageHTML(newsData);
                 $('#news-container').append(newsItems);
+                $('#news-with-image-container').append(newsWithImageItems);
             }).then(() => {
                 return $.get(publicationsUrl).then(tsv => {
-                    const pubData = parseTSV(tsv);
-                    console.log("Publications Data:", pubData);  // Debugging line
-                    const pubItems = generatePublicationHTML(pubData);  // corrected function name
+                    const pubData = parseTSV(tsv).slice(0, 3);
+                    const pubItems = generatePublicationHTML(pubData);
                     $('#publications-container').append(pubItems);
                 });
             }).then(() => {
                 return $.get(presentationsUrl).then(tsv => {
-                    const presData = parseTSV(tsv);
-                    console.log("Presentations Data:", presData);  // Debugging line
-                    const presItems = generatePresentationHTML(presData);  // corrected function name
+                    const presData = parseTSV(tsv).slice(0, 3);
+                    const presItems = generatePresentationHTML(presData);
+                    const presWithImageItems = generatePresentationWithImageHTML(presData);
                     $('#presentations-container').append(presItems);
+                    $('#presentations-with-image-container').append(presWithImageItems);
                 });
             }).fail((xhr, status, error) => {
                 console.error("TSV fetch failed:", status, error);
