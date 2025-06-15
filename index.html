@@ -683,7 +683,7 @@
                 let html = '<div class=""><h5>Latest Publications</h5><hr>\n';
 
                 data.forEach(item => {
-                    html += `    <h6 class="fw-normal lh-1"><a href=''>${escapeHtml(item.Title)}</a></h6>\n`;
+                    html += `    <h6 class="fw-normal lh-1"><a href='${escapeHtml(item.Link)}' target="_blank">${escapeHtml(item.Title)}</a></h6>\n`;
                     html += `    <p><em>${escapeHtml(item.Authors)}</em> (${escapeHtml(item.Year)})</p>\n`;
                 });
 
