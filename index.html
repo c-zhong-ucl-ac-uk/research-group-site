@@ -550,6 +550,17 @@
                     }
                     return 'default_image_url.jpg'; // Fallback URL for missing images
             }
+            function createNewsDetailLink(rawDateString) {
+                // Step 1: Parse the date string into a Date object
+                const dateObj = new Date(rawDateString);
+
+                // Step 2: Convert to ISO format without milliseconds and encode it
+                const isoString = dateObj.toISOString().split('.')[0]; // e.g., "2025-04-04T15:39:37"
+                const encoded = encodeURIComponent(isoString);
+
+                // Step 3: Construct final URL
+                return `news-details.html?timestamp=${encoded}`;
+            }
             function generatePresentationHTML(data, allLink = "#") {
                 let html = '<div class=""><h5>Latest Presentations</h5><hr>\n';
 
@@ -565,7 +576,7 @@
                         continue;
                     }
 
-                    html += `    <h6 class="fw-normal lh-1"><a href="${escapeHtml(item.URL || '#')}">${escapeHtml(item.Title)}</a></h6>\n`;
+                    html += `    <h6 class="fw-normal lh-1"><a href="${escapeHtml(item.Link || '#')}" target="_blank">${escapeHtml(item.Title)}</a></h6>\n`;
                     html += `    <p>${escapeHtml(item['Conference name'])}</p>\n`;
                     count++;
 
@@ -600,7 +611,7 @@
                         continue;
                     }
 
-                    html += `    <h6 class="fw-normal lh-1"><a href="${escapeHtml(item.URL || '#')}">${escapeHtml(item.Headline)}</a></h6>\n`;
+                    html += `    <h6 class="fw-normal lh-1"><a href="${createNewsDetailLink(item.Timestamp)}" target="_blank">${escapeHtml(item.Headline)}</a></h6>\n`;
                     html += `    <p>${escapeHtml(item.Body).substring(0, 130)}...</p>\n`;
                     count++;
 
@@ -623,8 +634,6 @@
        function generateNewsWithImageHTML(data) {
             if (!data || data.length === 0) return;
 
-
-
             // Find the first item that has an Image property
             const item = data.find(item => item.Image && item.Image.trim() !== '');
 
@@ -637,7 +646,7 @@
                 <div class="">
                     <img src="${imageSrc}" alt="" class="img-fluid mb-2" style="width: 100%; height: 300px; object-fit: cover;">
                     <h6 class="fw-normal lh-1">
-                        <a href="${escapeHtml(item.Link || '#')}">${escapeHtml(item.Headline)}</a>
+                        <a href="${createNewsDetailLink(item.Timestamp)}" target="_blank">${escapeHtml(item.Headline)}</a>
                     </h6>
                     <p>${escapeHtml(item.Body).substring(0, 130)}...</p>
                 </div>
@@ -661,7 +670,7 @@
                 <div class="">
                     <img src="${imageSrc}" alt="" class="img-fluid mb-2" style="width: 100%; height: 300px; object-fit: cover;">
                     <h6 class="fw-normal lh-1">
-                        <a href="${escapeHtml(item.Link || '#')}">${escapeHtml(item.Title)}</a>
+                        <a href="${escapeHtml(item.Link || '#')}" target="_blank">${escapeHtml(item.Title)}</a>
                     </h6>
                     <p>${escapeHtml(item['Conference name'])}</p>
                 </div>
