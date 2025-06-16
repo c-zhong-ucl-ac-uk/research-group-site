@@ -244,13 +244,13 @@
         const imageSrc = data.Image ? GenerateImageDirect(data.Image) : 'placeholder.jpg';
         const imageEl = document.getElementById('news-image');
         imageEl.src = imageSrc;
-        imageEl.alt = data.Headline || 'Featured Image';
+        imageEl.alt = 'Featured Image';
         imageEl.className = "bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto";
         imageEl.style.width = "100%";
         imageEl.style.height = "auto";
 
         // Convert links to anchors
-        let linksHtml = `<br/>References:<br/>`;
+        let linksHtml = `<br/>Links:<br/>`;
         linksHtml += (data.Links || '').replace(
             /(https?:\/\/[^\s]+|www\.[^\s]+)/gi,
             (match) => {
@@ -261,48 +261,58 @@
         document.getElementById('source-links').innerHTML = linksHtml;
     }
 
-    // Compare timestamps with tolerance for timezone differences
-    function compareTimestamps(timestamp1, timestamp2) {
-        if (!timestamp1 || !timestamp2) return false;
 
-        const clean1 = timestamp1.trim();
-        const clean2 = timestamp2.trim();
+// Compare timestamps matching all time components except hour, ignoring timezone differences
+function compareTimestamps(timestamp1, timestamp2) {
+    if (!timestamp1 || !timestamp2) return false;
 
-        console.log("Comparing timestamps:");
-        console.log("Timestamp 1:", clean1);
-        console.log("Timestamp 2:", clean2);
+    const clean1 = timestamp1.trim();
+    const clean2 = timestamp2.trim();
 
-        try {
-            // Convert both timestamps to Date objects
-            const date1 = new Date(clean1);
-            const date2 = new Date(clean2);
+    console.log("Comparing timestamps:");
+    console.log("Timestamp 1:", clean1);
+    console.log("Timestamp 2:", clean2);
 
-            console.log("Date 1:", date1);
-            console.log("Date 2:", date2);
+    try {
+        // Convert both timestamps to Date objects in UTC to normalize timezone differences
+        const date1 = new Date(clean1);
+        const date2 = new Date(clean2);
 
-            // Check if both dates are valid
-            if (isNaN(date1.getTime()) || isNaN(date2.getTime())) {
-                console.log("One or both dates are invalid");
-                return false;
-            }
+        console.log("Date 1:", date1);
+        console.log("Date 2:", date2);
 
-            // Calculate the time difference in milliseconds
-            const timeDiff = Math.abs(date1.getTime() - date2.getTime());
-            const hourInMs = 60 * 60 * 1000; // 1 hour in milliseconds
-
-            console.log("Time difference (ms):", timeDiff);
-            console.log("Time difference (hours):", timeDiff / hourInMs);
-
-            // Allow up to 2 hours difference to account for timezone issues
-            const match = timeDiff <= (2 * hourInMs);
-            console.log("Match (within 2 hours):", match);
-
-            return match;
-        } catch (error) {
-            console.error("Error comparing timestamps:", error);
+        // Check if both dates are valid
+        if (isNaN(date1.getTime()) || isNaN(date2.getTime())) {
+            console.log("One or both dates are invalid");
             return false;
         }
+
+        // Extract time components (ignoring hour)
+        const minutes1 = date1.getUTCMinutes();
+        const seconds1 = date1.getUTCSeconds();
+        const milliseconds1 = date1.getUTCMilliseconds();
+
+        const minutes2 = date2.getUTCMinutes();
+        const seconds2 = date2.getUTCSeconds();
+        const milliseconds2 = date2.getUTCMilliseconds();
+
+        console.log("Time components (excluding hour):");
+        console.log(`Date 1 - Minutes: ${minutes1}, Seconds: ${seconds1}, Milliseconds: ${milliseconds1}`);
+        console.log(`Date 2 - Minutes: ${minutes2}, Seconds: ${seconds2}, Milliseconds: ${milliseconds2}`);
+
+        // Compare all time components except hour
+        const match = minutes1 === minutes2 &&
+                     seconds1 === seconds2 &&
+                     milliseconds1 === milliseconds2;
+
+        console.log("Match (excluding hour):", match);
+
+        return match;
+    } catch (error) {
+        console.error("Error comparing timestamps:", error);
+        return false;
     }
+}
 
     $(document).ready(function () {
         // Get the raw timestamp parameter (URL-decoded automatically by URLSearchParams)
