@@ -11,9 +11,6 @@
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/carousel/">
 
-
-
-
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
 
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -312,8 +309,36 @@
                         <span style="margin-left: 5px;">Public Transport</span>
                     </label>
                 </div>
+                <div class="controls" style="
+                        position: absolute;
+                        left: 320px;
+                        background-color: rgba(255, 255, 255, 0.8);
+                        z-index: 1000;
+                        display: flex;
+                        flex-direction: row;
+                        white-space: nowrap;
+                        padding: 10px;
+                        border-radius: 4px;
+                        gap: 15px;
+                    ">
+                    <label style="display: flex; align-items: center;">
+                        <span style="width: 15px; height: 15px; background: red; display: inline-block; margin-right: 5px;"></span>
+                        <span>Red</span>
+                    </label>
+                    <label style="display: flex; align-items: center;">
+                        <span style="width: 15px; height: 15px; background: orange; display: inline-block; margin-right: 5px;"></span>
+                        <span>Orange</span>
+                    </label>
+                    <label style="display: flex; align-items: center;">
+                        <span style="width: 15px; height: 15px; background: green; display: inline-block; margin-right: 5px;"></span>
+                        <span>Green</span>
+                    </label>
+                </div>
+
             </div>
         </div>
+        <p class="mt-2">Hover your mouse over a neighbourhood to see potential for social interaction with residents of nearby neighbourhoods — how easy is it to meet up with other urban residents by various modes of transportation?
+        </p>
         <hr class="featurette-divider">
         <div class="container">
             <div class="row">
@@ -384,7 +409,7 @@
     $(document).ready(function() {
         let regionPairs = [];
 
-        fetch('data/SIP_CASA_0613_large.json')
+        fetch('data/SIP_CASA_0616.json')
             .then(response => response.json())
             .then(data => {
                 regionPairs = data;
@@ -398,11 +423,11 @@
             doubleClickZoom: false,  // Disable zooming on double-click
             touchZoom: false,        // Disable touch-based zooming
             boxZoom: false           // Disable zooming with box selection
-        }).setView(mapCenter, 12);
-
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+        }).setView(mapCenter, 13);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CartoDB</a>'
         }).addTo(map);
+
 
         // --- Custom Marker and Popup ---
         const customMarkerIcon = L.divIcon({
@@ -439,10 +464,10 @@
                         style: function (feature) {
                             return {
                                 fillColor: 'lightblue',
-                                color: 'blue',
-                                weight: 1,
+                                color: 'gray',
+                                weight: 0.5,
                                 opacity: 0.8,
-                                fillOpacity: 0.3
+                                fillOpacity: 0.1
                             };
                         }
                     }).addTo(map);
