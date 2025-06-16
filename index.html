@@ -456,7 +456,7 @@
         }
 
         let geojsonLayer;
-        fetch('data/aggregated.geojson')
+        fetch('data/small_london.geojson')
             .then(response => response.json())
             .then(data => {
                 if (data.features && data.features.length > 0) {
