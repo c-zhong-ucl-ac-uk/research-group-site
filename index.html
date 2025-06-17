@@ -410,7 +410,7 @@
     $(document).ready(function() {
         let regionPairs = [];
 
-        fetch('data/SIP_CASA_0616.json')
+        fetch('data/SIP_CASA_0613_large.json')
             .then(response => response.json())
             .then(data => {
                 regionPairs = data;
@@ -424,7 +424,7 @@
             doubleClickZoom: false,  // Disable zooming on double-click
             touchZoom: false,        // Disable touch-based zooming
             boxZoom: false           // Disable zooming with box selection
-        }).setView(mapCenter, 13);
+        }).setView(mapCenter, 14);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CartoDB</a>'
         }).addTo(map);
