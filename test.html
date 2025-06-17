@@ -1,160 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OpenStreetMap with GeoJSON Polygon and Connected Regions</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hover Name to Show Overlay</title>
     <style>
-        #map { height: 500px; width: 100%; }
-        .controls {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            background-color: white;
-            padding: 10px;
-            border-radius: 5px;
-            z-index: 999;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        .card {
+          position: relative;
+          width: 250px;
+          height: 120px;
+          border: 1px solid #ccc;
+          border-radius: 8px;
+          overflow: hidden;
+          font-family: Arial, sans-serif;
+          background: #f9f9f9;
+          padding: 20px;
+          box-sizing: border-box;
+        }
+
+        .name-link {
+          position: relative;
+          font-size: 1.4em;
+          font-weight: bold;
+          color: #1a73e8;
+          text-decoration: none;
+          z-index: 10; /* Always on top */
+          cursor: pointer;
+        }
+
+        .bio-overlay {
+          position: absolute;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background: rgba(0, 0, 0, 0.8);
+          color: white;
+          padding: 20px;
+          border-radius: 8px;
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.3s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          z-index: 5;
+        }
+
+        /* Show overlay when hovering on the name link */
+        .name-link:hover + .bio-overlay {
+          opacity: 1;
+          pointer-events: auto;
+          z-index: 15; /* make sure it’s above everything */
         }
     </style>
 </head>
 <body>
-<div class="controls">
-    <label><input type="radio" name="mode" id="modeSIPbi" value="SIP_bi"> SIP_bi</label><br>
-    <label><input type="radio" name="mode" id="modeSIPpt" value="SIP_pt"> SIP_pt</label><br>
-    <label><input type="radio" name="mode" id="modeSIPdr" value="SIP_dr"> SIP_dr</label><br>
+
+<div class="card">
+    <a href="https://example.com/johndoe" class="name-link" target="_blank" rel="noopener noreferrer">John Doe</a>
+    <div class="bio-overlay">
+        John is a software developer with 5 years of experience in web development and design.
+    </div>
 </div>
-<div id="map"></div>
 
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-<script>
-    let regionPairs = [];
-    fetch('data/SIP_camden_allmodes.json')
-        .then(response => response.json())
-        .then(data => {
-            regionPairs = data;
-        })
-        .catch(error => console.error('Error loading region pairs:', error));
-
-    var map = L.map('map').setView([51.54332, -0.15658], 14);
-
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CartoDB</a>'
-    }).addTo(map);
-
-    function getColor(value) {
-        if (value < 20) return 'lightblue';
-        if (value < 40) return 'lightgreen';
-        if (value < 60) return 'yellow';
-        if (value < 80) return 'orange';
-        return 'red';
-    }
-
-    let geojsonLayer;
-    fetch('data/camden2.geojson')
-        .then(response => response.json())
-        .then(data => {
-            if (data.features && data.features.length > 0) {
-                geojsonLayer = L.geoJSON(data, {
-                    style: function (feature) {
-                        return {
-                            fillColor: 'lightblue',
-                            color: 'blue',
-                            weight: 2,
-                            opacity: 0.8,
-                            fillOpacity: 0.3
-                        };
-                    }
-                }).addTo(map);
-
-                function highlightTargetRegion(sourceRegionCode) {
-                    const selectedMode = getSelectedMode();
-                    const connectedTargets = new Set();
-                    regionPairs.forEach(pair => {
-                        if (pair.source === sourceRegionCode) {
-                            connectedTargets.add(pair.target);
-                        }
-                    });
-
-                    geojsonLayer.eachLayer(function (layer) {
-                        const regionId = layer.feature.properties.lsoa21cd;
-                        if (connectedTargets.has(regionId)) {
-                            const regionPair = regionPairs.find(pair => pair.source === sourceRegionCode && pair.target === regionId);
-                            const value = regionPair ? regionPair[selectedMode.toLowerCase()] : 0;
-                            const color = getColor(value);
-
-                            layer.setStyle({
-                                fillColor: color,
-                                weight: 3,
-                                fillOpacity: 0.7
-                            });
-                        } else {
-                            layer.setStyle({
-                                fillColor: 'lightblue',
-                                weight: 2,
-                                fillOpacity: 0.3
-                            });
-                        }
-                    });
-                }
-
-                function resetHighlight() {
-                    geojsonLayer.eachLayer(function (layer) {
-                        layer.setStyle({
-                            fillColor: 'lightblue',
-                            weight: 2,
-                            fillOpacity: 0.3
-                        });
-                    });
-                }
-
-                geojsonLayer.on('mouseover', function (event) {
-                    const regionCode = event.layer.feature.properties.lsoa21cd;
-                    highlightTargetRegion(regionCode);
-                });
-
-                geojsonLayer.on('mouseout', resetHighlight);
-
-                const radioButtons = document.querySelectorAll('input[name="mode"]');
-                radioButtons.forEach(button => {
-                    button.addEventListener('change', updateMapColors);
-                });
-
-                function updateMapColors() {
-                    const selectedMode = getSelectedMode();
-                    if (!selectedMode) return;
-
-                    geojsonLayer.eachLayer(function (layer) {
-                        const regionCode = layer.feature.properties.lsoa21cd;
-                        let value = 0;
-
-                        const regionPair = regionPairs.find(pair => pair.source === regionCode || pair.target === regionCode);
-                        if (regionPair) {
-                            value = regionPair[selectedMode.toLowerCase()];
-                        }
-
-                        const color = getColor(value);
-
-                        layer.setStyle({
-                            fillColor: color,
-                            weight: 2,
-                            fillOpacity: 0.6
-                        });
-                    });
-                }
-
-                function getSelectedMode() {
-                    const selectedRadio = document.querySelector('input[name="mode"]:checked');
-                    return selectedRadio ? selectedRadio.value : '';
-                }
-            } else {
-                console.error('GeoJSON data is empty or invalid.');
-            }
-        })
-        .catch(error => console.error('Error loading GeoJSON: ', error));
-
-</script>
 </body>
 </html>

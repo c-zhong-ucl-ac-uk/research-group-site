@@ -120,6 +120,20 @@
             height: 350px; /* Square shape */
             object-fit: cover;
         }
+
+        .hover-area {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            /* Bottom will stop at the top of profile-name */
+            bottom: 80px;
+            background: transparent; /* Example hover color */
+            z-index: 112;
+            pointer-events: auto;
+        }
+
+
 .overlay {
     position: absolute;
     top: 0;
@@ -143,7 +157,7 @@
     -ms-overflow-style: none; /* IE/Edge */
    }
 
-.profile-card:hover .overlay {
+.hover-area:hover ~ .overlay {
     opacity: 1;
     cursor: pointer;
     pointer-events: auto; /* Enable interaction when visible */
@@ -163,7 +177,7 @@
 }
 
 /* Hide profile-name when hovering over the card */
-.profile-card:hover .profile-name {
+.hover-area:hover ~ .profile-name {
     opacity: 0;
     pointer-events: none; /* Prevent clicks when hidden */
 }
@@ -535,11 +549,11 @@ function populateCards(data, jobCounts) {
                     <div class="col">
                         <div class="card profile-card h-100">
                             <img src="${GenerateImageDirect(item.Image)}" class="card-img-top" alt="Profile Image">
+                            <div class="hover-area"></div>
 
                             <div class="overlay">
                                 <div class="bio-text">${item["Long Bio"] || "No description available."}</div>
                             </div>
-
                             <div class="profile-name">
                                 <p><strong>${item.Name || "No Name"}</strong>
                                 <br>
