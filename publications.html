@@ -196,18 +196,28 @@
     const tsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQRgLVjhKj9bGisYFNxW_AqvyfYQh4_3JsitOB8XRiwdX1tdBtwzq2MKKyY9a9sm8eltKqeqSLcRRYr/pub?output=tsv';
 
     function parseTSV(data) {
-        const lines = data.split("\n").map(line => line.trim());
+        const lines = data.split("\n").map(line => line.trim()).filter(line => line !== "");
         const headers = lines[0].split("\t");
         const rows = lines.slice(1).map(line => line.split("\t"));
 
-        return rows.map(row => {
+        const parsed = rows.map(row => {
             const obj = {};
             headers.forEach((header, index) => {
                 obj[header.trim()] = row[index]?.trim();
             });
             return obj;
         });
+
+        // Sort by 'Year' field in descending order
+        parsed.sort((a, b) => {
+            const dateA = new Date(a.Year);
+            const dateB = new Date(b.Year);
+            return dateB - dateA; // Descending order
+        });
+
+        return parsed;
     }
+
 
     $(document).ready(function() {
         $.ajax({

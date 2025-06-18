@@ -284,10 +284,25 @@
                 const values = lines[i].split('\t');
                 const rowData = {};
                 for (let j = 0; j < headers.length; j++) {
-                    rowData[headers[j]] = values[j];
+                    rowData[headers[j]] = values[j]?.trim();
                 }
                 jsonData.push(rowData);
             }
+
+            // Sort jsonData by 'Date' field in descending order; invalid dates go to the end
+            jsonData.sort((a, b) => {
+                const dateA = new Date(a.Date);
+                const dateB = new Date(b.Date);
+
+                const validA = !isNaN(dateA);
+                const validB = !isNaN(dateB);
+
+                if (!validA && !validB) return 0;      // Both invalid
+                if (!validA) return 1;                 // A invalid => after B
+                if (!validB) return -1;                // B invalid => after A
+
+                return dateB - dateA;                  // Descending
+            });
 
             const generatedItems = generateItems(jsonData);
             $("#presentations-container").append(generatedItems);
