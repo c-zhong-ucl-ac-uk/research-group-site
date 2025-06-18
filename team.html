@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Hugo 0.122.0">
-    <title>Urban Mobility Group</title>
+    <title>Urban Mobility Research Group</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/carousel/">
 
@@ -234,7 +234,7 @@
         <div class="container-fluid">
             <a class="navbar-brand" href="index.html">
 <!--                <img src="images/LOGO_ERC.png" alt="realTRIPS Logo" width="35" height="35">-->
-                Urban Mobility Group
+                Urban Mobility Research Group
             </a>            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -314,7 +314,7 @@
     <!-- FOOTER -->
     <footer class="container">
         <p class="float-end"><a href="#">Back to top</a></p>
-        <p>&copy; 2025 Urban Mobility Group, &middot; <a href="#">Contact</a></p>
+        <p>&copy; 2025 Urban Mobility Research Group, &middot; <a href="#">Contact</a></p>
     </footer>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
@@ -529,7 +529,7 @@ function populateCards(data, jobCounts) {
             itemsForJob.forEach(item => {
                 const linkedinLink = item.Linkedin ? `<a href="${item.Linkedin}" target="_blank">Linkedin</a>` : '';
                 const githubLink = item.Github ? `<a href="${item.Github}" target="_blank">GitHub</a>` : '';
-
+                const emailLink = item.Email ? `<a href="mailto:${item.Email}">Email</a>` : '';
                 let linksHTML = '';
                 if (linkedinLink || githubLink) {
                     linksHTML = `<p class="">`;
@@ -541,6 +541,9 @@ function populateCards(data, jobCounts) {
                     }
                     if (githubLink) {
                         linksHTML += githubLink;
+                    }
+                    if (emailLink) {
+                        linksHTML += ` | ${emailLink}`;
                     }
                     linksHTML += `</p>`;
                 }

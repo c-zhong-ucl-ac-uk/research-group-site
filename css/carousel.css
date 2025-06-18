@@ -8,9 +8,11 @@ body {
   color: rgb(var(--bs-tertiary-color-rgb));
 }
 .container {
-  max-width: 1075px !important;
+  max-width: 1170px !important;
 }
-
+.navbar .container-fluid {
+  max-width: 1170px !important;
+}
 /* CUSTOMIZE THE CAROUSEL
 -------------------------------------------------- */
 
