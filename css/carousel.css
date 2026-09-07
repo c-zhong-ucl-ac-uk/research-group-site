@@ -8,10 +8,10 @@ body {
   color: rgb(var(--bs-tertiary-color-rgb));
 }
 .container {
-  max-width: 1170px !important;
+  max-width: 1075px !important;
 }
 .navbar .container-fluid {
-  max-width: 1170px !important;
+  max-width: 1075px !important;
 }
 /* CUSTOMIZE THE CAROUSEL
 -------------------------------------------------- */
@@ -28,9 +28,6 @@ body {
 
 /* Declare heights because of positioning of img element */
 .carousel-item {
-}
-.carousel-item{
-    background:red;
 }
 
 /* MARKETING CONTENT
