@@ -4,24 +4,13 @@
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
-    <meta name="generator" content="Hugo 0.122.0">
+    <meta name="description" content="Urban Mobility Research Group at CASA UCL - Studying city life through human mobility data, GeoAI, and spatial simulations to support sustainable and inclusive urban futures.">
+    <meta name="author" content="Urban Mobility Research Group, CASA UCL">
     <title>Urban Mobility Research Group</title>
-
-    <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/carousel/">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
 
     <link href="css/bootstrap.min.css" rel="stylesheet">
-
-    <link rel="apple-touch-icon" href="/docs/5.3/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
-    <link rel="icon" href="/docs/5.3/assets/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
-    <link rel="icon" href="/docs/5.3/assets/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
-    <link rel="manifest" href="/docs/5.3/assets/img/favicons/manifest.json">
-    <link rel="mask-icon" href="/docs/5.3/assets/img/favicons/safari-pinned-tab.svg" color="#712cf9">
-    <link rel="icon" href="/docs/5.3/assets/img/favicons/favicon.ico">
-    <meta name="theme-color" content="#712cf9">
 
 
     <style>
@@ -122,6 +111,51 @@
             z-index: 999;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
+
+        .map-controls-mode {
+            position: absolute;
+            left: 20px;
+            bottom: 10px;
+            background-color: rgba(255, 255, 255, 0.95);
+            z-index: 1000;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .map-controls-legend {
+            position: absolute;
+            left: 180px;
+            bottom: 10px;
+            background-color: rgba(255, 255, 255, 0.95);
+            z-index: 1000;
+            padding: 10px;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .map-controls-mode {
+                left: 10px;
+                right: auto;
+                bottom: 120px;
+                font-size: 12px;
+            }
+
+            .map-controls-legend {
+                left: 10px;
+                right: 10px;
+                bottom: 10px;
+                flex-wrap: wrap;
+                font-size: 11px;
+                gap: 5px;
+            }
+
+            #map { height: 400px; }
+        }
                 .marker {
             position: relative;
             width: 20px;
@@ -188,7 +222,7 @@
         }
         .custom-popup p {
             margin: 0 0 14px 0;
-<!--            color: #666;-->
+            /* color: #666; */
             font-size: 16px;
             line-height: 1.5;
         }
@@ -255,12 +289,7 @@
                     <li class="nav-item">
                         <a class="nav-link" href="news.html">News</a>
                     </li>
-
                 </ul>
-                <form class="d-flex" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-primary" type="submit">Search</button>
-                </form>
             </div>
         </div>
     </nav>
@@ -288,49 +317,31 @@
             <div class="col-md-12" style="position: relative;">
                 <div id="map"></div>
 
-                <div class="controls" style="
-            position: absolute;
-            left: 20px;
-            background-color: rgba(255, 255, 255, 0.8);
-            z-index: 1000;
-            flex-direction: column;
-            white-space: nowrap;
-        ">
-                    <label style="">
+                <div class="map-controls-mode">
+                    <label style="display: block; margin-bottom: 5px;">
                         <input type="radio" name="mode" value="SIP_bi" checked>
                         <span style="margin-left: 5px;">Bicycle</span>
                     </label>
-                    <label style="">
+                    <label style="display: block; margin-bottom: 5px;">
                         <input type="radio" name="mode" value="SIP_car">
                         <span style="margin-left: 5px;">Car</span>
                     </label>
-                    <label>
+                    <label style="display: block;">
                         <input type="radio" name="mode" value="SIP_pt">
                         <span style="margin-left: 5px;">Public Transport</span>
                     </label>
                 </div>
-                <div class="controls" style="
-                        position: absolute;
-                        left: 320px;
-                        background-color: rgba(255, 255, 255, 0.8);
-                        z-index: 1000;
-                        display: flex;
-                        flex-direction: row;
-                        white-space: nowrap;
-                        padding: 10px;
-                        border-radius: 4px;
-                        gap: 15px;
-                    ">
-                    Potential for social interaction:
-                    <label style="display: flex; align-items: center;">
+                <div class="map-controls-legend">
+                    <span style="white-space: nowrap;">Social interaction:</span>
+                    <label style="display: flex; align-items: center; white-space: nowrap; margin: 0;">
                         <span style="width: 15px; height: 15px; background: red; display: inline-block; margin-right: 5px;"></span>
                         <span>High</span>
                     </label>
-                    <label style="display: flex; align-items: center;">
+                    <label style="display: flex; align-items: center; white-space: nowrap; margin: 0;">
                         <span style="width: 15px; height: 15px; background: orange; display: inline-block; margin-right: 5px;"></span>
                         <span>Medium</span>
                     </label>
-                    <label style="display: flex; align-items: center;">
+                    <label style="display: flex; align-items: center; white-space: nowrap; margin: 0;">
                         <span style="width: 15px; height: 15px; background: green; display: inline-block; margin-right: 5px;"></span>
                         <span>Low</span>
                     </label>
@@ -338,39 +349,33 @@
 
             </div>
         </div>
-        <p class="mt-2">Hover your mouse over a neighbourhood to see potential for social interaction with residents of nearby neighbourhoods — how easy is it to meet up with other urban residents by various modes of transportation?
+        <p class="mt-2 mb-4">Hover your mouse over a neighbourhood to see potential for social interaction with residents of nearby neighbourhoods — how easy is it to meet up with other urban residents by various modes of transportation?
         </p>
         <hr class="featurette-divider">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <h3 class="fw-normal lh-2">Urban Mobility Research Group @ <a href="https://www.ucl.ac.uk/bartlett/casa/">CASA UCL</a>
-                    </h3>
-                    <p>We study the rhythms of city life through the digital footprints people leave behind. Our work combines human mobility data, GeoAI, and spatial simulations to explore urban change, assess policy impacts, and support the planning of sustainable and inclusive futures in global cities.</p>
-                </div>
+        <div class="row">
+            <div class="col-md-12">
+                <h3 class="fw-normal lh-2">Urban Mobility Research Group @ <a href="https://www.ucl.ac.uk/bartlett/casa/">CASA UCL</a>
+                </h3>
+                <p>We study the rhythms of city life through the digital footprints people leave behind. Our work combines human mobility data, GeoAI, and spatial simulations to explore urban change, assess policy impacts, and support the planning of sustainable and inclusive futures in global cities.</p>
             </div>
         </div>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4">
-                    <h5 class="fw-normal lh-2 mt-3">Emerging Human Location Data</h5>
-                    <p>We focus on analysing individual-level human mobility data—including travel card records, mobile phone data, and geolocated social media—to gain nuanced insights into how people move through and interact with urban environments.
-
-                    </p>
-                </div>
-                <div class="col-md-4">
-                    <h5 class="fw-normal lh-2 mt-3">Cutting-Edge GeoAI Methods</h5>
-                    <p>Drawing from spatial data science, machine learning, deep learning, spatial network analysis, and causal inference, we develop innovative analytical frameworks and simulation models to detect mobility patterns, predict demand, and model urban futures.
-                    </p>
-                </div>
-                <div class="col-md-4">
-                    <h5 class="fw-normal lh-1 mt-3">City Planning Scenarios
-                    </h5>
-                    <p>Our case studies span diverse urban contexts—including London, Shenzhen, and Nairobi. Addressing pressing urban challenges, we are particularly focused on socio-spatial inequality, transport decarbonisation, and the evolution of urban spatial structure.</p>
-                </div>
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <h5 class="fw-normal lh-2">Emerging Human Location Data</h5>
+                <p>We focus on analysing individual-level human mobility data—including travel card records, mobile phone data, and geolocated social media—to gain nuanced insights into how people move through and interact with urban environments.
+                </p>
+            </div>
+            <div class="col-md-4">
+                <h5 class="fw-normal lh-2">Cutting-Edge GeoAI Methods</h5>
+                <p>Drawing from spatial data science, machine learning, deep learning, spatial network analysis, and causal inference, we develop innovative analytical frameworks and simulation models to detect mobility patterns, predict demand, and model urban futures.
+                </p>
+            </div>
+            <div class="col-md-4">
+                <h5 class="fw-normal lh-2">City Planning Scenarios</h5>
+                <p>Our case studies span diverse urban contexts—including London, Shenzhen, and Nairobi. Addressing pressing urban challenges, we are particularly focused on socio-spatial inequality, transport decarbonisation, and the evolution of urban spatial structure.</p>
             </div>
         </div>
-        <p class="featurette-divider">
+        <hr class="featurette-divider">
 
         <div class="row featurette">
             <div class="col-md-6" id="news-container">
@@ -379,14 +384,14 @@
             </div>
         </div>
 
-        <p class="featurette-divider">
+        <hr class="featurette-divider">
 
         <div class="row featurette">
             <div class="col-md-12 order-md-1" id="publications-container">
             </div>
         </div>
 
-        <p class="featurette-divider">
+        <hr class="featurette-divider">
 
         <div class="row featurette">
             <div class="col-md-6 order-md-2" id="presentations-container">
@@ -425,7 +430,7 @@
             touchZoom: false,        // Disable touch-based zooming
             boxZoom: false           // Disable zooming with box selection
         }).setView(mapCenter, 14);
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        L.tileLayer('https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=cb1_30mf_1_ceabb88936f2ee2e10427211', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CartoDB</a>'
         }).addTo(map);
 
