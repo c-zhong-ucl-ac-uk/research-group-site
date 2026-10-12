@@ -113,7 +113,7 @@
 
         .profile-card img {
             width: 100%;
-            height: 350px; /* Square shape */
+            height: 260px;
             object-fit: cover;
         }
 
@@ -144,7 +144,8 @@
     text-align: left;
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
-    padding: 20px;
+    padding: 14px;
+    font-size: 14px;
     overflow-y: auto;
     pointer-events: none;
 
@@ -160,14 +161,14 @@
 }
 
 .profile-name {
-    font-size: 16px;
+    font-size: 14px;
     position: absolute;
     bottom: 0px;
     left: 0px;
     right: 0px;
     width: 100%;
     background: rgba(0, 0, 0, 0.7);
-    padding: 14px;
+    padding: 10px;
     opacity: 1;
     transition: opacity 0.3s ease-in-out;
     z-index: 3;
@@ -510,12 +511,12 @@ function populateCards(data, jobCounts) {
         // Only create jobContainer if there are items for this job
         if (itemsForJob.length > 0) {
             // Create job section with title
-            const jobSection = $(`<div class="job-section mb-5">
+            const jobSection = $(`<div class="job-section mb-4">
                 <h5 class="mb-3">${key} (${jobCounts[key]})</h5>
             </div>`);
 
             // Create a single row container for all cards in this job category
-            const rowContainer = $(`<div class="row row-cols-1 row-cols-md-3 g-4"></div>`);
+            const rowContainer = $(`<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3"></div>`);
 
             // Loop through filtered items and create cards
             itemsForJob.forEach(item => {

@@ -18,6 +18,21 @@
             border-radius: 0 !important;
         }
 
+        .publication-keywords {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .4rem;
+            margin-top: .6rem;
+            margin-bottom: .3rem;
+        }
+        .publication-keyword {
+            padding: .15rem .5rem;
+            font-size: .78rem;
+            color: var(--bs-secondary-color, #555);
+            background: var(--bs-tertiary-bg, #f1f3f5);
+            border: 1px solid var(--bs-border-color, #dee2e6);
+        }
+
         .bd-placeholder-img {
           font-size: 1.125rem;
           text-anchor: middle;
@@ -213,6 +228,67 @@
     }
 
 
+    // Spreadsheet keywords take priority; title-based topics provide a starting point.
+    function getKeywords(row) {
+        const custom = row['Keywords'] || row['keywords'];
+        const title = row['Title'] || '';
+        const topics = [
+            ['Human mobility', /mobility|travel|commut|trip|migration/i],
+            ['Urban policy', /policy|emission zone|lockdown/i],
+            ['Spatial inequality', /inequal|segregation|disparit|equality|injustice/i],
+            ['Cycling', /cycl|bicycl/i],
+            ['Street view imagery', /street view/i],
+            ['Machine learning', /machine learning|prediction/i],
+            ['Mobile phone data', /mobile phone/i],
+            ['Social media', /twitter|social media/i],
+            ['Public transport', /public transport|transit|metro/i],
+            ['Urban structure', /polycentric|urban spatial structure|functional zones|urban expansion|scaling/i],
+            ['Built environment', /built environment|housing|land use/i],
+            ['Health', /hospital|pregnancy|ambulance|heat exposure/i],
+            ['Urban economy', /econom|spending|income|footfall/i],
+            ['Spatial data science', /spatial analysis|GIS|geography/i],
+        ];
+        const relatedTopics = {
+            'Human mobility': ['Mobility patterns', 'Travel behaviour'],
+            'Urban policy': ['Policy evaluation', 'Urban planning'],
+            'Spatial inequality': ['Social equity', 'Spatial analysis'],
+            'Cycling': ['Active travel', 'Cycling behaviour'],
+            'Street view imagery': ['Urban imagery', 'Visual environment'],
+            'Machine learning': ['Data-driven modelling', 'Predictive analytics'],
+            'Mobile phone data': ['Location data', 'Spatial analysis'],
+            'Social media': ['Digital traces', 'Spatial analysis'],
+            'Public transport': ['Transport planning', 'Accessibility'],
+            'Urban structure': ['Urban systems', 'Spatial analysis'],
+            'Built environment': ['Urban form', 'Urban planning'],
+            'Health': ['Urban health', 'Environmental exposure'],
+            'Urban economy': ['Economic geography', 'Urban activity'],
+            'Spatial data science': ['Geospatial methods', 'Urban analytics'],
+        };
+        const keywords = [];
+        const add = keyword => {
+            if (!keywords.some(existing => existing.toLowerCase() === keyword.toLowerCase())) {
+                keywords.push(keyword);
+            }
+        };
+        (custom || '').split(';').map(tag => tag.trim()).filter(Boolean).forEach(add);
+        const matches = topics.filter(([, pattern]) => pattern.test(title)).map(([tag]) => tag);
+        for (const topic of matches) {
+            if (keywords.length >= 3) break;
+            add(topic);
+        }
+        for (const topic of matches) {
+            for (const related of relatedTopics[topic]) {
+                if (keywords.length >= 3) break;
+                add(related);
+            }
+        }
+        for (const fallback of ['Urban research', 'Spatial analysis', 'Urban systems']) {
+            if (keywords.length >= 3) break;
+            add(fallback);
+        }
+        return keywords;
+    }
+
     $(document).ready(function() {
         $.ajax({
             url: tsvUrl,
@@ -230,25 +306,35 @@
             const container = $('#data-tables-container');
             container.empty();
 
-            const cityGroups = parsedData.reduce((groups, item) => {
-                const city = item['City'] || 'Other Cities';
-                if (!groups[city]) {
-                    groups[city] = [];
+            const dissertationTitle = 'MSc student dissertation projects';
+            const yearGroups = new Map();
+            const dissertations = [];
+            const getYear = row => row['Year']?.toString().match(/\d{4}/)?.[0] || 'Year not specified';
+
+            parsedData.forEach(item => {
+                if (item.Active?.toLowerCase() !== 'yes' || !item['Title']) return;
+                if (/^msc student dissertation projects$/i.test((item['City'] || '').trim())) {
+                    dissertations.push(item);
+                    return;
                 }
-                if (item.Active && (item.Active.toLowerCase() === "yes")) {
-                    groups[city].push(item);
-                }
-                return groups;
-            }, {});
+                const year = getYear(item);
+                if (!yearGroups.has(year)) yearGroups.set(year, []);
+                yearGroups.get(year).push(item);
+            });
 
-            for (const city in cityGroups) {
-                const cityData = cityGroups[city];
+            const sections = [...yearGroups.keys()]
+                .sort((a, b) => (parseInt(b) || 0) - (parseInt(a) || 0))
+                .map(year => ({ title: year, rows: yearGroups.get(year) }));
+            if (dissertations.length) {
+                sections.push({ title: dissertationTitle, rows: dissertations });
+            }
 
-                // Filter out inactive items *before* creating the table
-                const activeCityData = cityData.filter(row => row.Active && row.Active.toLowerCase() === "yes" && row['Title']);
+            for (const section of sections) {
+                const activeCityData = section.rows;
 
-                if (activeCityData.length > 0) { // Only create table if there are active items
-                    const table = $('<table class="table"><thead><tr><th scope="col" colspan="2"><h5>' + city + '</h5></th></tr></thead><tbody></tbody></table>');
+                if (activeCityData.length > 0) {
+                    const table = $('<table class="table"><thead><tr><th scope="col"><h3></h3></th></tr></thead><tbody></tbody></table>');
+                    table.find('h3').text(section.title);
                     const tbody = table.find('tbody');
 
                     activeCityData.forEach((row, index) => {
@@ -267,7 +353,18 @@
                         }
 
                         tableRow += '</td></tr>';
-                        tbody.append(tableRow);
+                        const publicationRow = $(tableRow);
+                        if (section.title !== dissertationTitle) {
+                            const keywords = getKeywords(row);
+                            if (keywords.length) {
+                                const tags = $('<div class="publication-keywords" aria-label="Keywords"></div>');
+                                keywords.forEach(keyword => {
+                                    tags.append($('<span class="publication-keyword"></span>').text(keyword));
+                                });
+                                publicationRow.find('td').append(tags);
+                            }
+                        }
+                        tbody.append(publicationRow);
                     });
 
                     container.append(table);
