@@ -108,10 +108,15 @@
                 .navbar .container-fluid {
             max-width: 1075px; /* Adjust this value as needed */
         }
+        .project-metadata {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: .4rem .75rem;
+        }
         .project-type {
             display: inline-block;
             padding: .15rem .5rem;
-            margin-bottom: .75rem;
             font-size: .78rem;
             color: var(--bs-secondary-color, #555);
             background: var(--bs-tertiary-bg, #f1f3f5);
@@ -258,7 +263,7 @@ dataList.forEach((data, index) => {
             <h6><strong>${year}</strong></h6>
             <p class="">${data["Short description"]}</p>
             <hr>
-            <p><strong>Funder: </strong>${data["Principle investigators"]}</p>
+            <p class="project-metadata"><span><strong>Funder: </strong>${data["Principle investigators"]}</span></p>
         `;
         // Google Forms writes the answer to the linked sheet's Project Type column.
         const typeEntry = Object.entries(data).find(([header]) => header.trim().toLowerCase() === 'project type');
@@ -267,7 +272,7 @@ dataList.forEach((data, index) => {
             const tag = document.createElement('span');
             tag.className = 'project-type';
             tag.textContent = projectType;
-            col1.querySelector('h5').after(tag);
+            col1.querySelector('.project-metadata').appendChild(tag);
         }
         col2.innerHTML = `<img src="${GenerateImageDirect(data["Image"])}" class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" width="100%" height="300" alt="Featured Image">`;
 
