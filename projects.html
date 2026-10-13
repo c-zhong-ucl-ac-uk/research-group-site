@@ -231,8 +231,14 @@
             return container;
         }
 
-        // Sort dataList by Year in descending order
+        const getProjectType = data => Object.entries(data)
+            .find(([header]) => header.trim().toLowerCase() === 'project type')?.[1]?.trim() || '';
+        const isSeedProject = data => getProjectType(data).toLowerCase() === 'seed fund for international collaboration';
+
+        // Show seed collaboration projects last, with newest projects first in each group.
 dataList.sort((a, b) => {
+    const typeOrder = Number(isSeedProject(a)) - Number(isSeedProject(b));
+    if (typeOrder) return typeOrder;
     const yearA = a.Year ? parseInt(a.Year.toString().match(/\d{4}/)?.[0]) || 0 : 0;
     const yearB = b.Year ? parseInt(b.Year.toString().match(/\d{4}/)?.[0]) || 0 : 0;
     return yearB - yearA; // Sort in descending order (newest first)
@@ -271,8 +277,7 @@ dataList.forEach((data, index) => {
             <p class="project-metadata"><span><strong>Funder: </strong>${data["Principle investigators"]}</span></p>
         `;
         // Google Forms writes the answer to the linked sheet's Project Type column.
-        const typeEntry = Object.entries(data).find(([header]) => header.trim().toLowerCase() === 'project type');
-        const projectType = typeEntry?.[1]?.trim();
+        const projectType = getProjectType(data);
         if (projectType) {
             const tag = document.createElement('span');
             tag.className = 'project-type';
