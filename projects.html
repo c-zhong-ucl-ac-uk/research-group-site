@@ -108,6 +108,15 @@
                 .navbar .container-fluid {
             max-width: 1075px; /* Adjust this value as needed */
         }
+        .project-type {
+            display: inline-block;
+            padding: .15rem .5rem;
+            margin-bottom: .75rem;
+            font-size: .78rem;
+            color: var(--bs-secondary-color, #555);
+            background: var(--bs-tertiary-bg, #f1f3f5);
+            border: 1px solid var(--bs-border-color, #dee2e6);
+        }
     </style>
 
 
@@ -251,6 +260,15 @@ dataList.forEach((data, index) => {
             <hr>
             <p><strong>Funder: </strong>${data["Principle investigators"]}</p>
         `;
+        // Google Forms writes the answer to the linked sheet's Project Type column.
+        const typeEntry = Object.entries(data).find(([header]) => header.trim().toLowerCase() === 'project type');
+        const projectType = typeEntry?.[1]?.trim();
+        if (projectType) {
+            const tag = document.createElement('span');
+            tag.className = 'project-type';
+            tag.textContent = projectType;
+            col1.querySelector('h5').after(tag);
+        }
         col2.innerHTML = `<img src="${GenerateImageDirect(data["Image"])}" class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" width="100%" height="300" alt="Featured Image">`;
 
             row.appendChild(col1);
